@@ -1,0 +1,12 @@
+.idea
+*.pyc
+/apps/*/migrations/[0-9]*
+/version/migrations/[0-9]*
+
+/.env
+.env
+.gitee
+.DS_Store
+/config/__init__.py
+gunicorn.conf.py
+gunicorn-bolin.pid
