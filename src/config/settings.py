@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'tools.apps.ToolsConfig',
     'users.apps.UsersConfig',
     'django_mysql',
-    'django.contrib.staticfiles'
 ]
 
 MIDDLEWARE = [
