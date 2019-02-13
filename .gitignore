@@ -1,7 +1,6 @@
 .idea
 *.pyc
-/apps/*/migrations/[0-9]*
-
+/fabric/*/migrations/[0-9]*
 /.env
 .env
 .gitee
