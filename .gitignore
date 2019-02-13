@@ -2,6 +2,7 @@
 *.pyc
 /src/*/migrations/[0-9]*
 .env
+/src/logs/
 *env/
 gunicorn.conf.py
 gunicorn-bolin.pid

@@ -13,7 +13,7 @@ class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
     list_display = ('id', 'name', 'user_name', 'ip', 'git_url', 'status', 'by_user', 'memo')
-    actions = ('deploy_project', 'check_info')
+    actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
 
     def check_info(self, request, queryset):
@@ -58,9 +58,40 @@ class SettingsAdmin(admin.ModelAdmin):
     check_info.short_description = '检查配置信息'
 
     def deploy_project(self, request, queryset):
-        qs = queryset.all()
-
-        message_bit = '%s 条客户审核通过，%s未审核过(证明不全/状态不对)'
+        qs = queryset[0]
+        ssh_user = qs.user_name
+        ssh_ip = qs.ip
+        code_path = qs.code_path
+        before_cmd = qs.before_cmd
+        before_list = before_cmd.split('\r\n')
+        after_cmd = qs.after_cmd
+        after_list = after_cmd.split('\r\n')
+        message_bit = '未发布'
+        if qs.flag == 1:
+            ssh_pwd = settings.TST_PWD
+        elif qs.flag == 2:
+            ssh_pwd = settings.PRD_PWD
+        try:
+            # 连接服务器
+            con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
+            git_url = qs.git_url
+            git_list = git_url.split('/')
+            git_name = git_list[-1]
+            if '.' in git_name:
+                git_name = git_name.split('.')[0]
+            # 检测git连接
+            with con.cd(code_path + '/' + git_name):
+                for before_line in before_list:
+                    if before_line:
+                        con.run(before_line)
+                con.run('git pull')
+                for after_line in after_list:
+                    if after_line:
+                        con.run(after_line)
+                message_bit = '发布成功...'
+        except Exception as e:
+            log.info('发布出错error:%s', str(e))
+            message_bit = '发布失败，详情请查看日志。'
 
         self.message_user(request, '%s' % message_bit)
 

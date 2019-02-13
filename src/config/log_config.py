@@ -26,11 +26,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'sentry': {
-            'level': 'ERROR',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-            'tags': {'custom-tag': 'x'},
-        },
         'console': {
             'level': 'DEBUG',
             # 'filters': ['require_debug_true'],
@@ -68,27 +63,27 @@ LOGGING = {
         },
     },
     'root': {
-        'handlers': ['root_other', 'console', 'sentry'],
+        'handlers': ['root_other', 'console'],
         'level': 'INFO',
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'sentry', ],
+            'handlers': ['console'],
             'propagate': False,
             'level': 'ERROR'
         },
         'django.db': {
-            'handlers': ['db_file', 'sentry', ],
+            'handlers': ['db_file'],
             'level': 'DEBUG',
             'propagate': True
         },
         'tools': {
-            'handlers': ['tools_file', 'console', 'sentry', ],
+            'handlers': ['tools_file', 'console'],
             'level': 'DEBUG',
             'propagate': False
         },
         'users': {
-            'handlers': ['users_file', 'console', 'sentry', ],
+            'handlers': ['users_file', 'console'],
             'level': 'DEBUG',
             'propagate': False
         },
