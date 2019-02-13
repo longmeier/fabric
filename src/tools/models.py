@@ -21,7 +21,7 @@ class Settings(TimeStampedModel):
     user_name = models.CharField(max_length=50, blank=True, null=True, verbose_name='服务器用户', help_text='服务器用户')
     ip = models.CharField(max_length=50, verbose_name='IP', help_text='IP')
     code_path = models.CharField(max_length=500, help_text='更新到代码路径', verbose_name='更新到代码路径')
-    before_cmd = models.TextField(help_text='部署前命令', verbose_name='部署前命令')
+    before_cmd = models.TextField(blank=True, null=True, help_text='部署前命令', verbose_name='部署前命令')
     after_cmd = models.TextField(blank=True, null=True, verbose_name='部署后命令', help_text='部署后命令')
     git_url = models.TextField(blank=True, null=True, verbose_name='git地址', help_text='git地址')
     tmp_code_path = models.CharField(max_length=500, help_text='tmp代码路径', verbose_name='tmp代码路径')
