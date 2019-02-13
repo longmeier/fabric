@@ -1,7 +1,7 @@
 .idea
 *.pyc
 /src/*/migrations/[0-9]*
-/.env
 .env
+*env/
 gunicorn.conf.py
 gunicorn-bolin.pid
