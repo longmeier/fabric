@@ -1,9 +1,7 @@
 .idea
 *.pyc
-/fabric/*/migrations/[0-9]*
+/src/*/migrations/[0-9]*
 /.env
 .env
-.gitee
-.DS_Store
 gunicorn.conf.py
 gunicorn-bolin.pid
