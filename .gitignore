@@ -5,6 +5,5 @@
 .env
 .gitee
 .DS_Store
-/config/__init__.py
 gunicorn.conf.py
 gunicorn-bolin.pid
