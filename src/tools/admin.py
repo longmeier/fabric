@@ -12,7 +12,7 @@ log = logging.Logger(__name__)
 class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
-    list_display = ('id', 'name', 'user_name', 'ip', 'git_url', 'status', 'by_user', 'memo')
+    list_display = ('id', 'name', 'user_flag', 'ip', 'git_url', 'status', 'by_user', 'memo')
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
 
