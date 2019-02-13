@@ -91,8 +91,10 @@ AUTH_USER_MODEL = 'users.User'
 DATABASES = {
     'default': env.db('DATABASE_URL', default='mysql://localhost/bolin_dev'),
 }
-TST_PWD = env('TST_PWD', default='https://q3.bolineyecare.com')
-PRD_PWD = env('PRD_PWD', default='https://q3.bolineyecare.com')
+TST_PYER_PWD = env('TST_PYER_PWD', default='https://q3.bolineyecare.com')
+TST_ROOT_PWD = env('TST_ROOT_PWD', default='https://q3.bolineyecare.com')
+PRD_PYER_PWD = env('PRD_PYER_PWD', default='https://q3.bolineyecare.com')
+PRD_ROOT_PWD = env('PRD_ROOT_PWD', default='https://q3.bolineyecare.com')
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

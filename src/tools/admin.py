@@ -18,14 +18,26 @@ class SettingsAdmin(admin.ModelAdmin):
 
     def check_info(self, request, queryset):
         qs = queryset[0]
-        ssh_user = qs.user_name
+        user_flag = qs.user_flag
+        # pyer用户
+        if user_flag == 1:
+            # 测试环境
+            if qs.flag == 1:
+                ssh_pwd = settings.TST_PYER_PWD
+                # 生产环境
+            elif qs.flag == 2:
+                ssh_pwd = settings.TST_ROOT_PWD
+        # root 用户
+        elif user_flag == 2:
+            if qs.flag == 1:  # 测试环境
+                ssh_pwd = settings.PRD_PYER_PWD
+            elif qs.flag == 2:  # 生产环境
+                ssh_pwd = settings.PRD_ROOT_PWD
+        ssh_user = qs.user_flag
         ssh_ip = qs.ip
         tmp_code_path = qs.tmp_code_path
         message_bit, ssh_flag, git_flag = '', False, False
-        if qs.flag == 1:
-            ssh_pwd = settings.TST_PWD
-        elif qs.flag == 2:
-            ssh_pwd = settings.PRD_PWD
+
         try:
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})

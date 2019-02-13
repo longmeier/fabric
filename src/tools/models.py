@@ -18,7 +18,7 @@ class Settings(TimeStampedModel):
 
     name = models.CharField(max_length=50, verbose_name='服务器名称', help_text='服务器名称')
     flag = models.IntegerField(default=1, choices=((1, '测试'), (2, '生产')), verbose_name="服务器")
-    user_name = models.CharField(max_length=50, blank=True, null=True, verbose_name='服务器用户', help_text='服务器用户')
+    user_flag = models.IntegerField(default=1, choices=((1, 'pyer'), (2, 'root')), verbose_name='服务器用户', help_text='服务器用户')
     ip = models.CharField(max_length=50, verbose_name='IP', help_text='IP')
     code_path = models.CharField(max_length=500, help_text='更新到代码路径', verbose_name='更新到代码路径')
     before_cmd = models.TextField(blank=True, null=True, help_text='部署前命令', verbose_name='部署前命令')
