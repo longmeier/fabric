@@ -21,19 +21,21 @@ class SettingsAdmin(admin.ModelAdmin):
         user_flag = qs.user_flag
         # pyer用户
         if user_flag == 1:
+            ssh_user = 'pyer'
             # 测试环境
             if qs.flag == 1:
                 ssh_pwd = settings.TST_PYER_PWD
                 # 生产环境
             elif qs.flag == 2:
-                ssh_pwd = settings.TST_ROOT_PWD
+                ssh_pwd = settings.PRD_PYER_PWD
         # root 用户
         elif user_flag == 2:
+            ssh_user = 'root'
             if qs.flag == 1:  # 测试环境
-                ssh_pwd = settings.PRD_PYER_PWD
+                ssh_pwd = settings.TST_ROOT_PWD
             elif qs.flag == 2:  # 生产环境
                 ssh_pwd = settings.PRD_ROOT_PWD
-        ssh_user = qs.user_flag
+
         ssh_ip = qs.ip
         tmp_code_path = qs.tmp_code_path
         message_bit, ssh_flag, git_flag = '', False, False
@@ -52,6 +54,8 @@ class SettingsAdmin(admin.ModelAdmin):
                 #     con.run('mkdir ' + git_name)
                 # else:
                 con.run('rm -rf ' + git_name)
+                # if user_flag == 2:
+                #     con.run('su pyer')
                 res = con.run('git clone ' + git_url)
                 git_flag = True
                 message_bit += '2.' + res.stdout
