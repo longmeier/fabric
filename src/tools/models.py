@@ -26,7 +26,7 @@ class Settings(TimeStampedModel):
     git_url = models.CharField(max_length=500, verbose_name='git地址', help_text='git地址')
     tmp_code_path = models.CharField(max_length=500, help_text='tmp代码路径', verbose_name='tmp代码路径')
     status = models.IntegerField(choices=((1, '正常'), (0, '不可用')), default=0, verbose_name='配置状态', help_text='配置状态')
-    memo = models.TextField(null=True, blank=True, help_text='主意事项', verbose_name='主意事项')
+    memo = models.TextField(null=True, blank=True, help_text='注意事项', verbose_name='注意事项')
     by_user = models.ForeignKey(User, null=True, blank=True, help_text='添加人', verbose_name='添加人',
                                 on_delete=models.DO_NOTHING)
 

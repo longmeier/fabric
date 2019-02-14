@@ -13,6 +13,8 @@ class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
     list_display = ('id', 'name', 'user_flag', 'ip', 'git_url', 'status', 'by_user', 'memo')
+    list_display_links = ['id', 'name', 'user_flag', 'ip', 'git_url', 'status', 'by_user', 'memo']
+    exclude = ('by_user',)
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
 
@@ -112,3 +114,12 @@ class SettingsAdmin(admin.ModelAdmin):
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
+
+    def response_post_save_add(self, request, obj):
+        user = request.user
+        obj.by_user = user  # 添加人
+        obj.save()
+        return super(SettingsAdmin, self).response_post_save_add(request, obj)
+
+
+admin.site.disable_action('delete_selected')
