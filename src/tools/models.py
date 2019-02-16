@@ -25,7 +25,7 @@ class Settings(TimeStampedModel):
     tmp_code_path = models.CharField(max_length=500, help_text='检测代码路径', verbose_name='检测代码路径')
     before_cmd = models.TextField(blank=True, null=True, help_text='部署前命令', verbose_name='部署前命令')
     after_cmd = models.TextField(blank=True, null=True, verbose_name='部署后命令', help_text='部署后命令')
-    memo = models.TextField(null=True, blank=True, help_text='注意事项', verbose_name='注意事项')
+    memo = models.CharField(max_length=500, null=True, blank=True, help_text='备注', verbose_name='备注')
     by_user = models.ForeignKey(User, null=True, blank=True, help_text='添加人', verbose_name='添加人',
                                 on_delete=models.DO_NOTHING)
 

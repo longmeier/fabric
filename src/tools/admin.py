@@ -99,27 +99,27 @@ class SettingsAdmin(admin.ModelAdmin):
         try:
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
-            log_str += '1.连接服务器'
+            log_str += '1.连接服务器完成;'
             git_url = qs.git_url
             git_branch = qs.git_branch
             git_list = git_url.split('/')
             git_name = git_list[-1]
             if '.' in git_name:
                 git_name = git_name.split('.')[0]
-            log_str += '2.获取git项目名称'
+            log_str += '2.获取git项目名称完成;'
             # 检测git连接
             with con.cd(code_path + '/' + git_name):
-                log_str += '3.进入目标路径'
+                log_str += '3.进入目标路径完成;'
                 for before_line in before_list:
                     if before_line:
                         con.run(before_line)
-                log_str += '4.执行拉取前的操作'
+                log_str += '4.执行拉取前的操作完成;'
                 con.run('git pull origin ' + git_branch)
-                log_str += '5.拉取代码'
+                log_str += '5.拉取代码完成;'
                 for after_line in after_list:
                     if after_line:
                         con.run(after_line)
-                log_str += '6.执行拉取后的操作'
+                log_str += '6.执行拉取后的操作完成;'
                 message_bit = '发布成功...'
                 log_status = 1
         except Exception as e:
