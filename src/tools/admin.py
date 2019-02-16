@@ -101,6 +101,7 @@ class SettingsAdmin(admin.ModelAdmin):
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
             log_str += '1.连接服务器'
             git_url = qs.git_url
+            git_branch = qs.git_branch
             git_list = git_url.split('/')
             git_name = git_list[-1]
             if '.' in git_name:
@@ -113,7 +114,7 @@ class SettingsAdmin(admin.ModelAdmin):
                     if before_line:
                         con.run(before_line)
                 log_str += '4.执行拉取前的操作'
-                con.run('git pull')
+                con.run('git pull origin ' + git_branch)
                 log_str += '5.拉取代码'
                 for after_line in after_list:
                     if after_line:
