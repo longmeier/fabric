@@ -285,8 +285,8 @@ class FrontEndAdmin(admin.ModelAdmin):
 class DeployLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('by_user', 'status')
-    list_display = ('id', 'project_flag', 'content', 'by_user', 'status')
-    list_display_links = ['id', 'project_flag', 'content', 'by_user', 'status']
+    list_display = ('id', 'name', 'project_flag', 'content', 'by_user', 'status')
+    list_display_links = ['id', 'name', 'project_flag', 'content', 'by_user', 'status']
     ordering = ['-id']
     readonly_fields = ('by_user', 'content', 'status')
 
