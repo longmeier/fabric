@@ -192,6 +192,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 git_name = git_list[-1]
                 if '.' in git_name:
                     git_name = git_name.split('.')[0]
+                    con.run('rm -rf aa3')
                 con.run('rm -rf ' + git_name)
                 res = con.run('git clone ' + git_url)
                 git_flag = True
