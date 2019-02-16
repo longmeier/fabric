@@ -32,3 +32,17 @@ class Settings(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+
+class DeployLog(TimeStampedModel):
+    """
+    配置表
+    """
+
+    class Meta:
+        verbose_name = verbose_name_plural = '发布日志'
+
+    by_user = models.ForeignKey(User, null=True, blank=True, help_text='发布人', verbose_name='发布人',
+                                on_delete=models.DO_NOTHING)
+    content = models.TextField(blank=True, null=True, help_text='日志内容', verbose_name='日志内容')
+    status = models.IntegerField(choices=((1, '成功'), (0, '失败')), default=0, verbose_name='状态', help_text='状态')

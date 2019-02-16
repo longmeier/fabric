@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Settings
+from .models import Settings, DeployLog
 import datetime
 from fabric import Connection
 from django.conf import settings
@@ -79,6 +79,7 @@ class SettingsAdmin(admin.ModelAdmin):
         before_list = before_cmd.split('\r\n')
         after_cmd = qs.after_cmd
         after_list = after_cmd.split('\r\n')
+        log_str, log_status = '', 0
         # pyer用户
         if user_flag == 1:
             ssh_user = 'pyer'
@@ -98,25 +99,33 @@ class SettingsAdmin(admin.ModelAdmin):
         try:
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
+            log_str += '1.连接服务器'
             git_url = qs.git_url
             git_list = git_url.split('/')
             git_name = git_list[-1]
             if '.' in git_name:
                 git_name = git_name.split('.')[0]
+            log_str += '2.获取git项目名称'
             # 检测git连接
             with con.cd(code_path + '/' + git_name):
+                log_str += '3.进入目标路径'
                 for before_line in before_list:
                     if before_line:
                         con.run(before_line)
+                log_str += '4.执行拉取前的操作'
                 con.run('git pull')
+                log_str += '5.拉取代码'
                 for after_line in after_list:
                     if after_line:
                         con.run(after_line)
+                log_str += '6.执行拉取后的操作'
                 message_bit = '发布成功...'
+                log_status = 1
         except Exception as e:
             log.info('发布出错error:%s', str(e))
+            log_str += 'error:%s' % str(e)
             message_bit = '发布失败，详情请查看日志。'
-
+        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status)
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
@@ -126,6 +135,16 @@ class SettingsAdmin(admin.ModelAdmin):
         obj.by_user = user  # 添加人
         obj.save()
         return super(SettingsAdmin, self).response_post_save_add(request, obj)
+
+
+@admin.register(Settings)
+class SettingsAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created'
+    search_fields = ('by_user', 'status')
+    list_display = ('id', 'by_user', 'content', 'status')
+    list_display_links = ['id', 'by_user', 'content', 'status']
+    exclude = ('by_user',)
+    ordering = ['-id']
 
 
 admin.site.disable_action('delete_selected')
