@@ -137,14 +137,14 @@ class SettingsAdmin(admin.ModelAdmin):
         return super(SettingsAdmin, self).response_post_save_add(request, obj)
 
 
-@admin.register(Settings)
-class SettingsAdmin(admin.ModelAdmin):
+@admin.register(DeployLog)
+class DeployLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('by_user', 'status')
     list_display = ('id', 'by_user', 'content', 'status')
     list_display_links = ['id', 'by_user', 'content', 'status']
-    exclude = ('by_user',)
     ordering = ['-id']
+    readonly_fields = ('by_user', 'content', 'status')
 
 
 admin.site.disable_action('delete_selected')
