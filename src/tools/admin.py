@@ -2,9 +2,8 @@ from django.contrib import admin
 from .models import Settings, DeployLog, FrontEnd
 import datetime
 from fabric import Connection
-from invoke import task, run
+from .utils import local
 from django.conf import settings
-import os
 
 import logging
 log = logging.Logger(__name__)
@@ -181,17 +180,16 @@ class FrontEndAdmin(admin.ModelAdmin):
         message_bit, ssh_flag, git_flag = '', False, False
 
         try:
-            run('cd ' + tmp_code_path)
-            run('rm -rf ' + git_name)
-            # run('git clone ' + git_url)
-            # run('git checkout ' + git_branch)
-            # run('git pull origin ' + git_branch)
+            local('', request._current_scheme_host)
             # 连接服务器
-            # con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
-            # git_url = qs.git_url
-            # # 检测git连接
-            # with con.cd(tmp_code_path):
-            #     git_list = git_url.split('/')
+            #con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
+            con = Connection('longmeier@127.0.0.1', connect_kwargs={'password': '1234'})
+            con.cd('cd /Users/longmeier')
+            con.local('ls ')
+            git_url = qs.git_url
+            # 检测git连接
+            with con.cd(tmp_code_path):
+                git_list = git_url.split('/')
             #     git_name = git_list[-1]
             #     if '.' in git_name:
             #         git_name = git_name.split('.')[0]
