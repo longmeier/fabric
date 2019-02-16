@@ -12,8 +12,8 @@ log = logging.Logger(__name__)
 class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
-    list_display = ('id', 'name', 'user_flag', 'ip', 'git_url', 'status', 'by_user', 'memo')
-    list_display_links = ['id', 'name', 'user_flag', 'ip', 'git_url', 'status', 'by_user', 'memo']
+    list_display = ('id', 'name', 'user_flag', 'server_ip', 'git_url', 'by_user', 'memo')
+    list_display_links = ['id', 'name', 'user_flag', 'server_ip', 'git_url', 'by_user', 'memo']
     exclude = ('by_user',)
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
@@ -25,20 +25,20 @@ class SettingsAdmin(admin.ModelAdmin):
         if user_flag == 1:
             ssh_user = 'pyer'
             # 测试环境
-            if qs.flag == 1:
+            if qs.server_flag == 1:
                 ssh_pwd = settings.TST_PYER_PWD
                 # 生产环境
-            elif qs.flag == 2:
+            elif qs.server_flag == 2:
                 ssh_pwd = settings.PRD_PYER_PWD
         # root 用户
         elif user_flag == 2:
             ssh_user = 'root'
-            if qs.flag == 1:  # 测试环境
+            if qs.server_flag == 1:  # 测试环境
                 ssh_pwd = settings.TST_ROOT_PWD
-            elif qs.flag == 2:  # 生产环境
+            elif qs.server_flag == 2:  # 生产环境
                 ssh_pwd = settings.PRD_ROOT_PWD
 
-        ssh_ip = qs.ip
+        ssh_ip = qs.server_ip
         tmp_code_path = qs.tmp_code_path
         message_bit, ssh_flag, git_flag = '', False, False
 
@@ -73,7 +73,7 @@ class SettingsAdmin(admin.ModelAdmin):
     def deploy_project(self, request, queryset):
         qs = queryset[0]
         user_flag = qs.user_flag
-        ssh_ip = qs.ip
+        ssh_ip = qs.server_ip
         code_path = qs.code_path
         before_cmd = qs.before_cmd
         before_list = before_cmd.split('\r\n')
@@ -84,10 +84,10 @@ class SettingsAdmin(admin.ModelAdmin):
         if user_flag == 1:
             ssh_user = 'pyer'
             # 测试环境
-            if qs.flag == 1:
+            if qs.server_flag == 1:
                 ssh_pwd = settings.TST_PYER_PWD
                 # 生产环境
-            elif qs.flag == 2:
+            elif qs.server_flag == 2:
                 ssh_pwd = settings.PRD_PYER_PWD
         # root 用户
         elif user_flag == 2:
