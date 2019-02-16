@@ -49,7 +49,7 @@ class FrontEnd(TimeStampedModel):
     git_branch = models.CharField(max_length=500, verbose_name='git分支', help_text='master/develop')
     code_path = models.CharField(max_length=500, help_text='发布目标代码路径上一级', verbose_name='发布目标代码路径上一级')
     tmp_code_path = models.CharField(max_length=500, help_text='本地打包代码路径', verbose_name='本地打包代码路径')
-    before_cmd = models.TextField(blank=True, null=True, help_text='打包代码命令', verbose_name='打包代码命令')
+    before_cmd = models.TextField(blank=True, null=True, help_text='打包代码前命令', verbose_name='打包代码前命令')
     after_cmd = models.TextField(blank=True, null=True, verbose_name='部署后命令', help_text='部署后命令')
     memo = models.CharField(max_length=500, null=True, blank=True, help_text='备注', verbose_name='备注')
     by_user = models.ForeignKey(User, null=True, blank=True, help_text='添加人', verbose_name='添加人',

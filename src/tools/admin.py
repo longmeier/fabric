@@ -2,11 +2,10 @@ from django.contrib import admin
 from .models import Settings, DeployLog, FrontEnd
 import datetime
 from fabric import Connection
-from .utils import local
 from django.conf import settings
+import os
 
-import logging
-log = logging.Logger(__name__)
+from .utils import loging as log
 
 
 @admin.register(Settings)
@@ -59,10 +58,10 @@ class SettingsAdmin(admin.ModelAdmin):
                 message_bit += '2.' + res.stdout
             ret = con.is_connected
             if ret:
-                log.info('1.连接服务器成功....')
+                log('info', '1.连接服务器成功....')
                 ssh_flag = True
         except Exception as e:
-            log.info('检查配置出错error:%s', str(e))
+            log('info', '检查配置出错error:%s' % str(e))
         if ssh_flag and git_flag:
             message_bit = '服务器连接正常'
         else:
@@ -171,7 +170,6 @@ class FrontEndAdmin(admin.ModelAdmin):
 
         ssh_ip = qs.server_ip
         tmp_code_path = qs.tmp_code_path
-        git_branch = qs.git_branch
         git_url = qs.git_url
         git_list = git_url.split('/')
         git_name = git_list[-1]
@@ -180,27 +178,23 @@ class FrontEndAdmin(admin.ModelAdmin):
         message_bit, ssh_flag, git_flag = '', False, False
 
         try:
-            log.error('aaa...')
+            log('info', '检测项目状态...')
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
-            git_url = qs.git_url
-            # 检测git连接
-            with con.cd(tmp_code_path):
-                git_list = git_url.split('/')
-                git_name = git_list[-1]
-                if '.' in git_name:
-                    git_name = git_name.split('.')[0]
-                con.run('rm -rf aa3')
-                con.run('rm -rf ' + git_name)
-                res = con.run('git clone ' + git_url)
-                git_flag = True
-                message_bit += '2.' + res.stdout
+            with con.cd('~'):
+                con.run('ls')
             ret = con.is_connected
             if ret:
-                log.info('1.连接服务器成功....')
+                log('info', '1.连接服务器完成....')
                 ssh_flag = True
+            os.system('rm -rf ' + tmp_code_path + '/' + git_name)
+            log('info', 'rm -rf ' + tmp_code_path + '/' + git_name)
+            os.system('git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
+            log('info', 'git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
+            log('info', '2.拉取代码完成....')
+            git_flag = True
         except Exception as e:
-            log.info('检查配置出错error:%s', str(e))
+            log('info', '检查配置出错error:%s', str(e))
         if ssh_flag and git_flag:
             message_bit = '服务器连接正常'
         else:
@@ -214,6 +208,7 @@ class FrontEndAdmin(admin.ModelAdmin):
         user_flag = qs.user_flag
         ssh_ip = qs.server_ip
         code_path = qs.code_path
+        tmp_code_path = qs.tmp_code_path
         before_cmd = qs.before_cmd
         before_list = before_cmd.split('\r\n')
         after_cmd = qs.after_cmd
@@ -235,38 +230,43 @@ class FrontEndAdmin(admin.ModelAdmin):
                 ssh_pwd = settings.TST_ROOT_PWD
             elif qs.flag == 2:  # 生产环境
                 ssh_pwd = settings.PRD_ROOT_PWD
+        git_branch = qs.git_branch
+        git_url = qs.git_url
+        git_list = git_url.split('/')
+        git_name = git_list[-1]
+        if '.' in git_name:
+            git_name = git_name.split('.')[0]
         try:
 
+            os.system('rm -rf ' + tmp_code_path + '/' + git_name)
+            log('info', 'rm -rf ' + tmp_code_path + '/' + git_name)
+            os.system('git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
+            log('info', 'git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
+            log_str += '1.拉取代码完成'
+            log('info', '1.拉取代码完成....')
+            for line in before_list:
+                if line:
+                    os.system(line)
+            os.system('zip ' + tmp_code_path + '/' + git_name + '.zip ' + tmp_code_path + '/' + git_name)
+            log_str += '2.%s打包完成...' % git_name
+            log('info', '2.%s打包完成...' % git_name)
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
-            log_str += '1.连接服务器完成;'
-            git_url = qs.git_url
-            git_branch = qs.git_branch
-            git_list = git_url.split('/')
-            git_name = git_list[-1]
-            if '.' in git_name:
-                git_name = git_name.split('.')[0]
-            log_str += '2.获取git项目名称完成;'
+            log_str += '3.连接服务器完成...;'
+            log('info', '3.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
             # 检测git连接
-            with con.cd(code_path + '/' + git_name):
+            with con.cd(code_path):
                 log_str += '3.进入目标路径完成;'
-                log_str += '4.执行拉取前的操作完成;'
-                con.run('rm -rf ' + git_name)
-                res = con.run('git clone ' + git_url)
-                con.run('git pull origin ' + git_branch)
-                for before_line in before_list:
-                    if before_line:
-                        con.run(before_line)
-                log_str += '4.执行拉取前的操作完成;'
-                log_str += '5.拉取代码完成;'
-                for after_line in after_list:
-                    if after_line:
-                        con.run(after_line)
-                log_str += '6.执行拉取后的操作完成;'
+                log_str += '4.执行分发前的操作完成;'
+                con.put(tmp_code_path + '/' + git_name + '.zip', git_name + '.zip')
+                con.run('rm -rf ' + git_name + '2/')
+                con.run('mv ' + git_name + ' ' + git_name + '2')
+                con.run('unzip ' + git_name + '.zip')
+                log_str += '6.代码分发完成;'
                 message_bit = '发布成功...'
                 log_status = 1
         except Exception as e:
-            log.info('发布出错error:%s', str(e))
+            log('info', '发布出错error:%s' % str(e))
             log_str += 'error:%s' % str(e)
             message_bit = '发布失败，详情请查看日志。'
         DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=1)
