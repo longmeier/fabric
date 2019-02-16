@@ -182,24 +182,24 @@ class FrontEndAdmin(admin.ModelAdmin):
         try:
             con1 = Connection('pyer@127.0.0.1', connect_kwargs={'password': 'bolin1024'})
             with con1.cd('/home/data/tmp'):
-                con1.run('rm -rf aa')
+                con1.run('rm -rf aa2')
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
             git_url = qs.git_url
             # 检测git连接
             with con.cd(tmp_code_path):
                 git_list = git_url.split('/')
-            #     git_name = git_list[-1]
-            #     if '.' in git_name:
-            #         git_name = git_name.split('.')[0]
-            #     con.run('rm -rf ' + git_name)
-            #     res = con.run('git clone ' + git_url)
-            #     git_flag = True
-            #     message_bit += '2.' + res.stdout
-            # ret = con.is_connected
-            # if ret:
-            #     log.info('1.连接服务器成功....')
-            #     ssh_flag = True
+                git_name = git_list[-1]
+                if '.' in git_name:
+                    git_name = git_name.split('.')[0]
+                con.run('rm -rf ' + git_name)
+                res = con.run('git clone ' + git_url)
+                git_flag = True
+                message_bit += '2.' + res.stdout
+            ret = con.is_connected
+            if ret:
+                log.info('1.连接服务器成功....')
+                ssh_flag = True
         except Exception as e:
             log.info('检查配置出错error:%s', str(e))
         if ssh_flag and git_flag:
