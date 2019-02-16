@@ -44,10 +44,6 @@ class SettingsAdmin(admin.ModelAdmin):
         message_bit, ssh_flag, git_flag = '', False, False
 
         try:
-            con1 = Connection('pyer@127.0.0.1', connect_kwargs={'password': 'bolin1024'})
-            with con1.cd('/home/data/tmp'):
-                con1.run('rm -rf aa')
-
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
             git_url = qs.git_url
@@ -184,7 +180,9 @@ class FrontEndAdmin(admin.ModelAdmin):
         message_bit, ssh_flag, git_flag = '', False, False
 
         try:
-            local('', request._current_scheme_host)
+            con1 = Connection('pyer@127.0.0.1', connect_kwargs={'password': 'bolin1024'})
+            with con1.cd('/home/data/tmp'):
+                con1.run('rm -rf aa')
             # 连接服务器
             #con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
             con = Connection('longmeier@127.0.0.1', connect_kwargs={'password': '1234'})
