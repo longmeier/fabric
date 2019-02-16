@@ -184,10 +184,7 @@ class FrontEndAdmin(admin.ModelAdmin):
             with con1.cd('/home/data/tmp'):
                 con1.run('rm -rf aa')
             # 连接服务器
-            #con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
-            con = Connection('longmeier@127.0.0.1', connect_kwargs={'password': '1234'})
-            con.cd('cd /Users/longmeier')
-            con.local('ls ')
+            con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
             git_url = qs.git_url
             # 检测git连接
             with con.cd(tmp_code_path):
