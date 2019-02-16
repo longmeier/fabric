@@ -16,6 +16,7 @@ class Settings(TimeStampedModel):
         verbose_name = verbose_name_plural = '配置表'
 
     name = models.CharField(max_length=50, verbose_name='项目名称', help_text='项目名称')
+    eger_flag = models.IntegerField(default=1, choices=((1, '后端'), (2, '前端')), verbose_name="项目分类")
     server_flag = models.IntegerField(default=1, choices=((1, '测试'), (2, '生产')), verbose_name="服务器")
     user_flag = models.IntegerField(default=1, choices=((1, 'pyer'), (2, 'root')), verbose_name='服务器用户', help_text='服务器用户')
     server_ip = models.CharField(max_length=50, verbose_name='服务器IP', help_text='服务器IP')
