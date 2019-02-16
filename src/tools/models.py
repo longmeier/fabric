@@ -66,7 +66,7 @@ class DeployLog(TimeStampedModel):
 
     class Meta:
         verbose_name = verbose_name_plural = '发布日志'
-
+    name = models.CharField(max_length=50, verbose_name='项目名称', help_text='项目名称')
     by_user = models.ForeignKey(User, null=True, blank=True, help_text='发布人', verbose_name='发布人',
                                 on_delete=models.DO_NOTHING)
     project_flag = models.IntegerField(choices=((1, '后端'), (2, '前端')), default=1, verbose_name='项目分类', help_text='项目分类')

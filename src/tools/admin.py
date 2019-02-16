@@ -126,7 +126,7 @@ class SettingsAdmin(admin.ModelAdmin):
             log.info('发布出错error:%s', str(e))
             log_str += 'error:%s' % str(e)
             message_bit = '发布失败，详情请查看日志。'
-        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=1)
+        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=1, name=git_name)
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
@@ -269,7 +269,7 @@ class FrontEndAdmin(admin.ModelAdmin):
             log('info', '发布出错error:%s' % str(e))
             log_str += 'error:%s' % str(e)
             message_bit = '发布失败，详情请查看日志。'
-        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=1)
+        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=1, name=git_name)
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
