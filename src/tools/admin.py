@@ -52,12 +52,7 @@ class SettingsAdmin(admin.ModelAdmin):
                 git_name = git_list[-1]
                 if '.' in git_name:
                     git_name = git_name.split('.')[0]
-                # if not os.path.exists(tmp_code_path + '/' + git_name):
-                #     con.run('mkdir ' + git_name)
-                # else:
                 con.run('rm -rf ' + git_name)
-                # if user_flag == 2:
-                #     con.run('su pyer')
                 res = con.run('git clone ' + git_url)
                 git_flag = True
                 message_bit += '2.' + res.stdout
@@ -77,18 +72,29 @@ class SettingsAdmin(admin.ModelAdmin):
 
     def deploy_project(self, request, queryset):
         qs = queryset[0]
-        ssh_user = qs.user_name
+        user_flag = qs.user_flag
         ssh_ip = qs.ip
         code_path = qs.code_path
         before_cmd = qs.before_cmd
         before_list = before_cmd.split('\r\n')
         after_cmd = qs.after_cmd
         after_list = after_cmd.split('\r\n')
-        message_bit = '未发布'
-        if qs.flag == 1:
-            ssh_pwd = settings.TST_PWD
-        elif qs.flag == 2:
-            ssh_pwd = settings.PRD_PWD
+        # pyer用户
+        if user_flag == 1:
+            ssh_user = 'pyer'
+            # 测试环境
+            if qs.flag == 1:
+                ssh_pwd = settings.TST_PYER_PWD
+                # 生产环境
+            elif qs.flag == 2:
+                ssh_pwd = settings.PRD_PYER_PWD
+        # root 用户
+        elif user_flag == 2:
+            ssh_user = 'root'
+            if qs.flag == 1:  # 测试环境
+                ssh_pwd = settings.TST_ROOT_PWD
+            elif qs.flag == 2:  # 生产环境
+                ssh_pwd = settings.PRD_ROOT_PWD
         try:
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
