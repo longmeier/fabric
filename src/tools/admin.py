@@ -180,6 +180,7 @@ class FrontEndAdmin(admin.ModelAdmin):
         message_bit, ssh_flag, git_flag = '', False, False
 
         try:
+            log.error('aaa...')
             con1 = Connection('pyer@127.0.0.1', connect_kwargs={'password': 'bolin1024'})
             with con1.cd('/home/data/tmp'):
                 con1.run('rm -rf aa2')
