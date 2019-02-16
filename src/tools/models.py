@@ -21,7 +21,7 @@ class Settings(TimeStampedModel):
     user_flag = models.IntegerField(default=1, choices=((1, 'pyer'), (2, 'root')), verbose_name='服务器用户', help_text='服务器用户')
     server_ip = models.CharField(max_length=50, verbose_name='服务器IP', help_text='服务器IP')
     git_url = models.CharField(max_length=500, verbose_name='git地址', help_text='git地址')
-    git_branch = models.CharField(max_length=500, verbose_name='git分支', help_text='git分支')
+    git_branch = models.CharField(max_length=500, verbose_name='git分支', help_text='master/develop')
     code_path = models.CharField(max_length=500, help_text='发布目标代码路径上一级', verbose_name='发布目标代码路径上一级')
     tmp_code_path = models.CharField(max_length=500, help_text='检测代码路径', verbose_name='检测代码路径')
     before_cmd = models.TextField(blank=True, null=True, help_text='部署前命令', verbose_name='部署前命令')

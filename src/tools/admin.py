@@ -12,8 +12,8 @@ log = logging.Logger(__name__)
 class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
-    list_display = ('id', 'name', 'eger_flag', 'server_ip', 'git_url', 'by_user', 'memo')
-    list_display_links = ['id', 'name', 'eger_flag', 'server_ip', 'git_url', 'by_user', 'memo']
+    list_display = ('id', 'name', 'server_flag', 'eger_flag', 'server_ip', 'git_url', 'by_user', 'memo')
+    list_display_links = ['id', 'name', 'server_flag', 'eger_flag', 'server_ip', 'git_url', 'by_user', 'memo']
     exclude = ('by_user',)
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
