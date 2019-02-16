@@ -4,6 +4,7 @@ from django.conf import settings
 
 def local(command, flag):
 
+
     if '127' in flag:
         pyer = 'longmeier'
         pwd = '1234'
