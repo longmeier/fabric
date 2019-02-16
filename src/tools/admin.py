@@ -181,10 +181,6 @@ class FrontEndAdmin(admin.ModelAdmin):
 
         try:
             log.error('aaa...')
-            con1 = Connection('pyer@127.0.0.1', connect_kwargs={'password': 'bolin1024'})
-            with con1.cd('/home/data/tmp'):
-                con1.run('rm -rf aa2')
-                con1.run('exit')
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
             git_url = qs.git_url
@@ -194,7 +190,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 git_name = git_list[-1]
                 if '.' in git_name:
                     git_name = git_name.split('.')[0]
-                    con.run('rm -rf aa3')
+                con.run('rm -rf aa3')
                 con.run('rm -rf ' + git_name)
                 res = con.run('git clone ' + git_url)
                 git_flag = True
