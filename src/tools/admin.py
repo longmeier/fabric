@@ -237,32 +237,56 @@ class FrontEndAdmin(admin.ModelAdmin):
         if '.' in git_name:
             git_name = git_name.split('.')[0]
         try:
-
-            os.system('rm -rf ' + tmp_code_path + '/' + git_name)
-            log('info', 'rm -rf ' + tmp_code_path + '/' + git_name)
-            os.system('git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
-            log('info', 'git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
-            log_str += '1.拉取代码完成'
-            log('info', '1.拉取代码完成....')
+            # 本地代码拉取--打包
+            cmd = 'rm -rf ' + tmp_code_path + '/' + git_name
+            os.system(cmd)
+            log('info', '1.删除已存在的项目:' + cmd)
+            log_str += '1.删除已存在的项目:' + cmd
+            cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url + ' ' + tmp_code_path + '/' + git_name
+            os.system(cmd)
+            log('info', '2.克隆指定分支代码:' + cmd)
+            log_str += '2.克隆指定分支代码:' + cmd
             for line in before_list:
                 if line:
                     os.system(line)
-            os.system('zip ' + tmp_code_path + '/' + git_name + '.zip ' + tmp_code_path + '/' + git_name)
-            log_str += '2.%s打包完成...' % git_name
-            log('info', '2.%s打包完成...' % git_name)
+                    log('info', '3.执行打包前的操作:' + line)
+                    log_str += '3.执行打包前的操作:' + line
+            cmd = 'zip -r ' + tmp_code_path + '/' + git_name + '.zip ' + tmp_code_path + '/' + git_name
+            os.system(cmd)
+            log('info', '4.开始打包文件:' + cmd)
+            log_str += '4.开始打包文件:' + cmd
             # 连接服务器
             con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
-            log_str += '3.连接服务器完成...;'
-            log('info', '3.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
-            # 检测git连接
+            log('info', '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
+            log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
             with con.cd(code_path):
-                log_str += '3.进入目标路径完成;'
-                log_str += '4.执行分发前的操作完成;'
-                con.put(tmp_code_path + '/' + git_name + '.zip', git_name + '.zip')
-                con.run('rm -rf ' + git_name + '2/')
-                con.run('mv ' + git_name + ' ' + git_name + '2')
-                con.run('unzip ' + git_name + '.zip')
-                log_str += '6.代码分发完成;'
+                cmd = (tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
+                con.put(tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
+                log('info', '6.上传zip文件:' + str(cmd))
+                log_str += '6.上传zip文件:' + str(cmd)
+                cmd = 'rm -rf ' + git_name + '2/'
+                con.run(cmd)
+                log('info', '7.删除以前备份文件:' + cmd)
+                log_str += '7.删除以前备份文件:' + cmd
+                ls_list = con.run('ls').stdout.split('\n')
+                if git_name in ls_list:
+                    cmd = 'mv ' + git_name + ' ' + git_name + '2'
+                    con.run(cmd)
+                    log('info', '7.开始备份文件:' + cmd)
+                    log_str += '7.开始备份文件:' + cmd
+                mv_code_path = tmp_code_path[1:]
+                cmd = 'rm -rf ' + mv_code_path + '/' + git_name
+                con.run(cmd)
+                log('info', '8.删除已存在的文件:' + cmd)
+                log_str += '8.删除已存在的文件:' + cmd
+                cmd = 'unzip ' + git_name + '.zip'
+                con.run(cmd)
+                log('info', '9.解压文件:' + cmd)
+                log_str += '9.解压文件:' + cmd
+                cmd = 'mv ' + mv_code_path + '/' + git_name + ' ' + git_name
+                con.run(cmd)
+                log('info', '10.转移文件:' + cmd)
+                log_str += '10.转移文件:' + cmd
                 message_bit = '发布成功...'
                 log_status = 1
         except Exception as e:
