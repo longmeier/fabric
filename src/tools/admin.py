@@ -260,12 +260,17 @@ class FrontEndAdmin(admin.ModelAdmin):
             for line in before_list:
                 if line:
                     if 'cd' in line:
-                        os.chdir(line)
+                        line_ = line.split(' ')[1]
+                        os.chdir(line_)
                     else:
                         os.system(line)
                     log('info', '3.执行打包前的操作:' + line)
                     log_str += '3.执行打包前的操作:' + line
-            cmd = 'zip -r ' + tmp_code_path + '/' + git_name + '.zip ' + tmp_code_path + '/' + git_name
+            cmd = tmp_code_path
+            os.chdir(cmd)
+            log('info', '4.进入打包路径:' + cmd)
+            log_str += '4.进入打包路径:' + cmd
+            cmd = 'zip -r ' + git_name + '.zip ' + git_name
             os.system(cmd)
             log('info', '4.开始打包文件:' + cmd)
             log_str += '4.开始打包文件:' + cmd
@@ -297,10 +302,10 @@ class FrontEndAdmin(admin.ModelAdmin):
                 con.run(cmd)
                 log('info', '9.解压文件:' + cmd)
                 log_str += '9.解压文件:' + cmd
-                cmd = 'mv ' + mv_code_path + '/' + git_name + ' ' + git_name
-                con.run(cmd)
-                log('info', '10.转移文件:' + cmd)
-                log_str += '10.转移文件:' + cmd
+                # cmd = 'mv ' + mv_code_path + '/' + git_name + ' ' + git_name
+                # con.run(cmd)
+                # log('info', '10.转移文件:' + cmd)
+                # log_str += '10.转移文件:' + cmd
                 message_bit = '发布成功...'
                 log_status = 1
         except Exception as e:
