@@ -298,6 +298,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 log.info('[npm]' + line)
             cmd = tmp_code_path + '/' + git_name + ''
             os.chdir(cmd)
+            os.system('rm -rf dist.zip')
             log.info('4.进入打包路径:' + cmd)
             log_str += '4.进入打包路径:' + cmd
             cmd = 'zip -r dist.zip dist'
