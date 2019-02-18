@@ -253,18 +253,38 @@ class FrontEndAdmin(admin.ModelAdmin):
             os.chdir(tmp_code_path)
             log.info('0.进入打包目录:' + tmp_code_path)
             log_str += '0.进入打包目录:' + tmp_code_path
-            cmd = 'rm -rf ' + git_name
-            os.system(cmd)
-            log.info('1.删除已存在的项目:' + cmd)
-            log_str += '1.删除已存在的项目:' + cmd
-            cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url
-            os.system(cmd)
-            log.info('2.克隆指定分支代码:' + cmd)
-            log_str += '2.克隆指定分支代码:' + cmd
-            # 打包操作
-            cmd = tmp_code_path + '/' + git_name
-            log.info('3.进入' + cmd)
-            os.chdir(cmd)
+            if os.path.exists(git_name):
+                cmd = '0.' + tmp_code_path + '下面存在' + git_name + '目录'
+                log.info(cmd)
+                log_str += cmd
+                try:
+                    cmd = tmp_code_path + '/' + git_name
+                    log.info('0.进入项目' + cmd)
+                    log_str += '0.进入项目' + cmd
+                    os.chdir(cmd)
+                    cmd = ' git checkout ' + git_branch
+                    log.info('1.切换分支' + cmd)
+                    log_str += '1.切换分支' + cmd
+                    os.system(cmd)
+                    cmd = ' git pull '
+                    log.info('1.获取最新代码' + cmd)
+                    log_str += '1.获取最新代码' + cmd
+                    os.system(cmd)
+                except Exception as e:
+                    log.error('0.项目error' + str(e))
+                    cmd = 'rm -rf ' + git_name
+                    os.system(cmd)
+                    log.info('1.删除已存在的项目:' + cmd)
+                    log_str += '1.删除已存在的项目:' + cmd
+            else:
+                cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url
+                os.system(cmd)
+                log.info('2.克隆指定分支代码:' + cmd)
+                log_str += '2.克隆指定分支代码:' + cmd
+                # 打包操作
+                cmd = tmp_code_path + '/' + git_name
+                log.info('3.进入' + cmd)
+                os.chdir(cmd)
             yarn_line = os.popen('yarn')  # 执行该命令
             info = yarn_line.readlines()  # 读取命令行的输出到一个list
             for line in info:  # 按行遍历
@@ -297,7 +317,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 con.run(cmd)
                 log.info('7.删除以前备份文件:' + cmd)
                 log_str += '7.删除以前备份文件:' + cmd
-                cmd = 'mv dist' + git_name + '2'
+                cmd = 'mv dist dist2'
                 con.run(cmd)
                 log.info('7.开始备份文件:' + cmd)
                 log_str += '7.开始备份文件:' + cmd
