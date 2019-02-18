@@ -13,8 +13,8 @@ log = logging.getLogger(__name__)
 class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
-    list_display = ('id', 'name', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
-    list_display_links = ['id', 'name', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
+    list_display = ('id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
+    list_display_links = ['id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
     exclude = ('by_user',)
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
@@ -74,6 +74,7 @@ class SettingsAdmin(admin.ModelAdmin):
     def deploy_project(self, request, queryset):
         qs = queryset[0]
         user_flag = qs.user_flag
+        server_flag = qs.server_flag
         ssh_ip = qs.server_ip
         code_path = qs.code_path
         before_cmd = qs.before_cmd
@@ -137,7 +138,8 @@ class SettingsAdmin(admin.ModelAdmin):
             log.error('发布出错error:%s', str(e))
             log_str += 'error:%s' % str(e)
             message_bit = '发布失败，详情请查看日志。'
-        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=1, name=git_name)
+        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=1,
+                                 name=git_name, git_branch=git_branch, server_flag=server_flag)
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
@@ -153,8 +155,8 @@ class SettingsAdmin(admin.ModelAdmin):
 class FrontEndAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
-    list_display = ('id', 'name', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
-    list_display_links = ['id', 'name', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
+    list_display = ('id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
+    list_display_links = ['id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
     exclude = ('by_user', 'before_cmd')
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
@@ -218,6 +220,7 @@ class FrontEndAdmin(admin.ModelAdmin):
     def deploy_project(self, request, queryset):
         qs = queryset[0]
         user_flag = qs.user_flag
+        server_flag = qs.server_flag
         ssh_ip = qs.server_ip
         code_path = qs.code_path
         tmp_code_path = qs.tmp_code_path
@@ -333,7 +336,8 @@ class FrontEndAdmin(admin.ModelAdmin):
             log.error('发布出错error:%s' % str(e))
             log_str += 'error:%s' % str(e)
             message_bit = '发布失败，详情请查看日志。'
-        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=2, name=git_name)
+        DeployLog.objects.create(by_user=request.user, content=log_str, status=log_status, project_flag=2,
+                                 name=git_name, git_branch=git_branch, server_flag=server_flag)
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
@@ -349,10 +353,10 @@ class FrontEndAdmin(admin.ModelAdmin):
 class DeployLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('by_user', 'status')
-    list_display = ('id', 'name', 'project_flag', 'content', 'by_user', 'status')
-    list_display_links = ['id', 'name', 'project_flag', 'content', 'by_user', 'status']
+    list_display = ('id', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status')
+    list_display_links = ['id', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status']
     ordering = ['-id']
-    readonly_fields = ('name', 'project_flag', 'by_user', 'content', 'status')
+    readonly_fields = ('name', 'git_branch', 'server_flag',  'project_flag', 'by_user', 'content', 'status')
 
 
 admin.site.disable_action('delete_selected')
