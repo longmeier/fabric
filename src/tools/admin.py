@@ -267,6 +267,7 @@ class FrontEndAdmin(admin.ModelAdmin):
             cmd = '/home/data/code/fabric/env/bin/python yarn.py ' + tmp_code_path + '/' + git_name
             os.system(cmd)
             yarn_flag, npm_flag = False, False
+            log.info('3.yarn执行....')
             while True:
                 with open('/home/data/code/fabric/src/logs/front.txt', 'r') as f:  # 打开文件
                     lines = f.readlines()  # 读取所有行
@@ -276,6 +277,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 if yarn_flag:
                     log.info('3.yarn执行完成')
                     break
+            log.info('3.npm run build执行....')
             while True:
                 with open('/home/data/code/fabric/src/logs/front.txt', 'r') as f:  # 打开文件
                     lines = f.readlines()  # 读取所有行
