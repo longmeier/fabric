@@ -262,31 +262,50 @@ class FrontEndAdmin(admin.ModelAdmin):
             log.info('2.克隆指定分支代码:' + cmd)
             log_str += '2.克隆指定分支代码:' + cmd
             # 打包操作
-            cmd = '/home/data/code/fabric/env/bin/python /home/data/code/fabric/src/yarn.py ' + tmp_code_path + '/' + git_name
-            log.info('3.执行yarn.py ' + cmd)
-            os.system(cmd)
-            yarn_flag, npm_flag = False, False
-            log.info('3.yarn执行....')
-            while True:
-                with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
-                    lines = f.readlines()  # 读取所有行
-                    last_line = lines[-1]  # 取最后一行
-                    if 'yarn]' in last_line and 'success' in last_line:
-                        yarn_flag = True
-                if yarn_flag:
-                    log.info('3.yarn执行完成')
-                    break
-            log.info('3.npm run build执行....')
-            while True:
-                with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
-                    lines = f.readlines()  # 读取所有行
-                    last_line = lines[-1]  # 取最后一行
-                    if 'npm]' in last_line and 'Build complete' in last_line:
-                        yarn_flag = True
-                if yarn_flag:
-                    log.info('3.npm run build执行完成')
-                    break
+            # cmd = '/home/data/code/fabric/env/bin/python /home/data/code/fabric/src/yarn.py ' + tmp_code_path + '/' + git_name
+            # log.info('3.执行yarn.py ' + cmd)
+            # os.system(cmd)
+            # yarn_flag, npm_flag = False, False
+            # log.info('3.yarn执行....')
+            # while True:
+            #     with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
+            #         lines = f.readlines()  # 读取所有行
+            #         last_line = lines[-1]  # 取最后一行
+            #         if 'yarn]' in last_line and 'success' in last_line:
+            #             yarn_flag = True
+            #     if yarn_flag:
+            #         log.info('3.yarn执行完成')
+            #         break
+            # log.info('3.npm run build执行....')
+            # while True:
+            #     with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
+            #         lines = f.readlines()  # 读取所有行
+            #         last_line = lines[-1]  # 取最后一行
+            #         if 'npm]' in last_line and 'Build complete' in last_line:
+            #             yarn_flag = True
+            #     if yarn_flag:
+            #         log.info('3.npm run build执行完成')
+            #         break
+            cmd = tmp_code_path + '/' + git_name
+            log.info('3.进入' + cmd)
+            os.chdir(cmd)
+            yarn_line = os.popen('yarn')  # 执行该命令
+            info = yarn_line.readlines()  # 读取命令行的输出到一个list
+            for line in info:  # 按行遍历
+                line = line.strip('\r\n')
+                # with open("/home/data/code/fabric/src/logs/front.log", "a") as f:
+                #     line = '[yarn]->' + line
+                #     f.write(line + '\n')
+                log.info('[yarn]' + line)
 
+            npm_line = os.popen('npm run build')
+            info = npm_line.readlines()  # 读取命令行的输出到一个list
+            for line in info:  # 按行遍历
+                line = line.strip('\r\n')
+                # with open("/home/data/code/fabric/src/logs/front.log", "a") as f:
+                #     line = '[npm]->' + line
+                #     f.write(line + '\n')
+                log.info('[npm]' + line)
             cmd = tmp_code_path
             os.chdir(cmd)
             log.info('4.进入打包路径:' + cmd)

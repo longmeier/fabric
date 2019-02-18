@@ -4,9 +4,8 @@ import sys
 
 
 def yarn_shell(code_path):
-
-    os.chdir(code_path)
     os.system('rm -f ' + '/home/data/code/fabric/src/logs/front.log')
+    os.chdir(code_path)
     yarn_line = os.popen('yarn')  # 执行该命令
     info = yarn_line.readlines()  # 读取命令行的输出到一个list
     for line in info:  # 按行遍历
