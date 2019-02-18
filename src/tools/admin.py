@@ -271,7 +271,10 @@ class FrontEndAdmin(admin.ModelAdmin):
                     else:
                         log.info('3.执行打包前的操作:' + line)
                         log_str += '3.执行打包前的操作:' + line
-                        os.system(line)
+                        os.popen(line)
+            # cmd = tmp_code_path + '/' + git_name
+            # os.chdir(cmd)
+            # os.popen()
 
             cmd = tmp_code_path
             os.chdir(cmd)
