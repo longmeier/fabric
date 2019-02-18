@@ -73,7 +73,3 @@ class DeployLog(TimeStampedModel):
     content = models.TextField(blank=True, null=True, help_text='日志内容', verbose_name='日志内容')
     status = models.IntegerField(choices=((1, '成功'), (0, '失败')), default=0, verbose_name='状态', help_text='状态')
 
-
-class FrontLog(TimeStampedModel):
-    yarn = models.IntegerField(choices=((1, '成功'), (0, '失败')), default=0, verbose_name='状态', help_text='状态')
-    npm = models.IntegerField(choices=((1, '成功'), (0, '失败')), default=0, verbose_name='状态', help_text='状态')

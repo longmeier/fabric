@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Settings, DeployLog, FrontEnd
+from .models import Settings, DeployLog, FrontEnd, FrontLog
 import datetime
 from fabric import Connection
 from django.conf import settings
@@ -155,7 +155,7 @@ class FrontEndAdmin(admin.ModelAdmin):
     search_fields = ('name', 'status')
     list_display = ('id', 'name', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
     list_display_links = ['id', 'name', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
-    exclude = ('by_user',)
+    exclude = ('by_user', 'before_cmd')
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
 
@@ -261,10 +261,30 @@ class FrontEndAdmin(admin.ModelAdmin):
             os.system(cmd)
             log.info('2.克隆指定分支代码:' + cmd)
             log_str += '2.克隆指定分支代码:' + cmd
-
-            # cmd = tmp_code_path + '/' + git_name
-            # os.chdir(cmd)
-            # os.popen()
+            # 打包操作
+            cmd = '/home/data/code/fabric/src/tools'
+            os.chdir(cmd)
+            cmd = '/home/data/code/fabric/env/bin/python yarn.py ' + tmp_code_path + '/' + git_name
+            os.system(cmd)
+            yarn_flag, npm_flag = False, False
+            while True:
+                with open('/home/data/code/fabric/src/logs/front.txt', 'r') as f:  # 打开文件
+                    lines = f.readlines()  # 读取所有行
+                    last_line = lines[-1]  # 取最后一行
+                    if 'yarn]' in last_line and 'success' in last_line:
+                        yarn_flag = True
+                if yarn_flag:
+                    log.info('3.yarn执行完成')
+                    break
+            while True:
+                with open('/home/data/code/fabric/src/logs/front.txt', 'r') as f:  # 打开文件
+                    lines = f.readlines()  # 读取所有行
+                    last_line = lines[-1]  # 取最后一行
+                    if 'npm]' in last_line and 'Build complete' in last_line:
+                        yarn_flag = True
+                if yarn_flag:
+                    log.info('3.npm run build执行完成')
+                    break
 
             cmd = tmp_code_path
             os.chdir(cmd)

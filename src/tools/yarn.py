@@ -6,13 +6,21 @@ import sys
 def yarn_shell(code_path):
 
     os.chdir(code_path)
-    os.system('yarn')
-    os.system('npm run build')
-    r = os.popen('npm run build')  # 执行该命令
-    info = r.readlines()  # 读取命令行的输出到一个list
+    os.system('rm -f ' + '/home/data/code/fabric/src/logs/front.log')
+    yarn_line = os.popen('yarn')  # 执行该命令
+    info = yarn_line.readlines()  # 读取命令行的输出到一个list
     for line in info:  # 按行遍历
         line = line.strip('\r\n')
-        print(line)
+        with open("/home/data/code/fabric/src/logs/front.log", "a") as f:
+            line = '[yarn]->' + line
+            f.write(line + '\n')
+    npm_line = os.popen('npm run build')
+    info = npm_line.readlines()  # 读取命令行的输出到一个list
+    for line in info:  # 按行遍历
+        line = line.strip('\r\n')
+        with open("/home/data/code/fabric/src/logs/front.log", "a") as f:
+            line = '[npm]->' + line
+            f.write(line + '\n')
 
 
 if __name__ == "__main__":
