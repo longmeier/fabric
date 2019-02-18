@@ -259,7 +259,10 @@ class FrontEndAdmin(admin.ModelAdmin):
             log_str += '2.克隆指定分支代码:' + cmd
             for line in before_list:
                 if line:
-                    os.system(line)
+                    if 'cd' in line:
+                        os.chdir(line)
+                    else:
+                        os.system(line)
                     log('info', '3.执行打包前的操作:' + line)
                     log_str += '3.执行打包前的操作:' + line
             cmd = 'zip -r ' + tmp_code_path + '/' + git_name + '.zip ' + tmp_code_path + '/' + git_name
