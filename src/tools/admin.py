@@ -249,11 +249,14 @@ class FrontEndAdmin(admin.ModelAdmin):
             git_name = git_name.split('.')[0]
         try:
             # 本地代码拉取--打包
-            cmd = 'rm -rf ' + tmp_code_path + '/' + git_name
+            os.chdir(tmp_code_path)
+            log('info', '0.进入打包目录:' + tmp_code_path)
+            log_str += '0.进入打包目录:' + tmp_code_path
+            cmd = 'rm -rf ' + git_name
             os.system(cmd)
             log('info', '1.删除已存在的项目:' + cmd)
             log_str += '1.删除已存在的项目:' + cmd
-            cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url + ' ' + tmp_code_path + '/' + git_name
+            cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url
             os.system(cmd)
             log('info', '2.克隆指定分支代码:' + cmd)
             log_str += '2.克隆指定分支代码:' + cmd
