@@ -263,6 +263,7 @@ class FrontEndAdmin(admin.ModelAdmin):
             log_str += '2.克隆指定分支代码:' + cmd
             # 打包操作
             cmd = '/home/data/code/fabric/env/bin/python /home/data/code/fabric/src/yarn.py ' + tmp_code_path + '/' + git_name
+            log.info('3.执行yarn.py ' + cmd)
             os.system(cmd)
             yarn_flag, npm_flag = False, False
             log.info('3.yarn执行....')
