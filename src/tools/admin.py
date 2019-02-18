@@ -271,7 +271,11 @@ class FrontEndAdmin(admin.ModelAdmin):
                     else:
                         log.info('3.执行打包前的操作:' + line)
                         log_str += '3.执行打包前的操作:' + line
-                        os.popen(line)
+                        r = os.popen(line)
+                        info = r.readlines()  # 读取命令行的输出到一个list
+                        for line_str in info:  # 按行遍历
+                            line_str = line_str.strip('\r\n')
+                            log.info(line_str)
             # cmd = tmp_code_path + '/' + git_name
             # os.chdir(cmd)
             # os.popen()
