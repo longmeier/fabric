@@ -78,9 +78,9 @@ class SettingsAdmin(admin.ModelAdmin):
         ssh_ip = qs.server_ip
         code_path = qs.code_path
         before_cmd = qs.before_cmd
-        before_list = before_cmd.split('\r\n')
+        before_list = before_cmd.split('\r\n') if before_cmd else []
         after_cmd = qs.after_cmd
-        after_list = after_cmd.split('\r\n')
+        after_list = after_cmd.split('\r\n') if after_cmd else []
         log_str, log_status = '', 0
         # pyer用户
         if user_flag == 1:
@@ -225,9 +225,9 @@ class FrontEndAdmin(admin.ModelAdmin):
         code_path = qs.code_path
         tmp_code_path = qs.tmp_code_path
         before_cmd = qs.before_cmd
-        before_list = before_cmd.split('\r\n')
+        before_list = before_cmd.split('\r\n') if before_cmd else []
         after_cmd = qs.after_cmd
-        after_list = after_cmd.split('\r\n')
+        after_list = after_cmd.split('\r\n') if after_cmd else []
         log_str, log_status = '', 0
         # pyer用户
         if user_flag == 1:
