@@ -268,7 +268,7 @@ class FrontEndAdmin(admin.ModelAdmin):
             yarn_flag, npm_flag = False, False
             log.info('3.yarn执行....')
             while True:
-                with open('/home/data/code/fabric/src/logs/front.txt', 'r') as f:  # 打开文件
+                with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
                     lines = f.readlines()  # 读取所有行
                     last_line = lines[-1]  # 取最后一行
                     if 'yarn]' in last_line and 'success' in last_line:
@@ -278,7 +278,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                     break
             log.info('3.npm run build执行....')
             while True:
-                with open('/home/data/code/fabric/src/logs/front.txt', 'r') as f:  # 打开文件
+                with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
                     lines = f.readlines()  # 读取所有行
                     last_line = lines[-1]  # 取最后一行
                     if 'npm]' in last_line and 'Build complete' in last_line:
