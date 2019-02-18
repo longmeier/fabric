@@ -309,6 +309,7 @@ class FrontEndAdmin(admin.ModelAdmin):
             log.info('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
             log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
             with con.cd(code_path):
+                con.run('rm -rf dist.zip')
                 cmd = (tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
                 con.put(tmp_code_path + '/' + git_name + '/dist.zip', code_path + '/dist.zip')
                 log.info('6.上传zip文件:' + str(cmd))
