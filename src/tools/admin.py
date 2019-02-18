@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Settings, DeployLog, FrontEnd, FrontLog
+from .models import Settings, DeployLog, FrontEnd
 import datetime
 from fabric import Connection
 from django.conf import settings
