@@ -264,11 +264,14 @@ class FrontEndAdmin(admin.ModelAdmin):
                 if line:
                     if 'cd' in line:
                         line_ = line.split(' ')[1]
+                        log('info', '3.执行打包前的操作:' + line_)
+                        log_str += '3.执行打包前的操作:' + line_
                         os.chdir(line_)
                     else:
+                        log('info', '3.执行打包前的操作:' + line)
+                        log_str += '3.执行打包前的操作:' + line
                         os.system(line)
-                    log('info', '3.执行打包前的操作:' + line)
-                    log_str += '3.执行打包前的操作:' + line
+
             cmd = tmp_code_path
             os.chdir(cmd)
             log('info', '4.进入打包路径:' + cmd)
