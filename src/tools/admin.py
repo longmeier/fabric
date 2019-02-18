@@ -262,30 +262,6 @@ class FrontEndAdmin(admin.ModelAdmin):
             log.info('2.克隆指定分支代码:' + cmd)
             log_str += '2.克隆指定分支代码:' + cmd
             # 打包操作
-            # cmd = '/home/data/code/fabric/env/bin/python /home/data/code/fabric/src/yarn.py ' + tmp_code_path + '/' + git_name
-            # log.info('3.执行yarn.py ' + cmd)
-            # os.system(cmd)
-            # yarn_flag, npm_flag = False, False
-            # log.info('3.yarn执行....')
-            # while True:
-            #     with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
-            #         lines = f.readlines()  # 读取所有行
-            #         last_line = lines[-1]  # 取最后一行
-            #         if 'yarn]' in last_line and 'success' in last_line:
-            #             yarn_flag = True
-            #     if yarn_flag:
-            #         log.info('3.yarn执行完成')
-            #         break
-            # log.info('3.npm run build执行....')
-            # while True:
-            #     with open('/home/data/code/fabric/src/logs/front.log', 'r') as f:  # 打开文件
-            #         lines = f.readlines()  # 读取所有行
-            #         last_line = lines[-1]  # 取最后一行
-            #         if 'npm]' in last_line and 'Build complete' in last_line:
-            #             yarn_flag = True
-            #     if yarn_flag:
-            #         log.info('3.npm run build执行完成')
-            #         break
             cmd = tmp_code_path + '/' + git_name
             log.info('3.进入' + cmd)
             os.chdir(cmd)
@@ -293,24 +269,18 @@ class FrontEndAdmin(admin.ModelAdmin):
             info = yarn_line.readlines()  # 读取命令行的输出到一个list
             for line in info:  # 按行遍历
                 line = line.strip('\r\n')
-                # with open("/home/data/code/fabric/src/logs/front.log", "a") as f:
-                #     line = '[yarn]->' + line
-                #     f.write(line + '\n')
                 log.info('[yarn]' + line)
 
             npm_line = os.popen('npm run build')
             info = npm_line.readlines()  # 读取命令行的输出到一个list
             for line in info:  # 按行遍历
                 line = line.strip('\r\n')
-                # with open("/home/data/code/fabric/src/logs/front.log", "a") as f:
-                #     line = '[npm]->' + line
-                #     f.write(line + '\n')
                 log.info('[npm]' + line)
-            cmd = tmp_code_path
+            cmd = tmp_code_path + '/' + git_name + ''
             os.chdir(cmd)
             log.info('4.进入打包路径:' + cmd)
             log_str += '4.进入打包路径:' + cmd
-            cmd = 'zip -r ' + git_name + '.zip ' + git_name
+            cmd = 'zip -r dist.zip dist'
             os.system(cmd)
             log.info('4.开始打包文件:' + cmd)
             log_str += '4.开始打包文件:' + cmd
@@ -320,32 +290,21 @@ class FrontEndAdmin(admin.ModelAdmin):
             log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
             with con.cd(code_path):
                 cmd = (tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
-                con.put(tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
+                con.put(tmp_code_path + '/' + git_name + '/dist.zip', code_path + '/dist.zip')
                 log.info('6.上传zip文件:' + str(cmd))
                 log_str += '6.上传zip文件:' + str(cmd)
-                cmd = 'rm -rf ' + git_name + '2/'
+                cmd = 'rm -rf dist2/'
                 con.run(cmd)
                 log.info('7.删除以前备份文件:' + cmd)
                 log_str += '7.删除以前备份文件:' + cmd
-                ls_list = con.run('ls').stdout.split('\n')
-                if git_name in ls_list:
-                    cmd = 'mv ' + git_name + ' ' + git_name + '2'
-                    con.run(cmd)
-                    log.info('7.开始备份文件:' + cmd)
-                    log_str += '7.开始备份文件:' + cmd
-                mv_code_path = tmp_code_path[1:]
-                cmd = 'rm -rf ' + mv_code_path + '/' + git_name
+                cmd = 'mv dist' + git_name + '2'
                 con.run(cmd)
-                log.info('8.删除已存在的文件:' + cmd)
-                log_str += '8.删除已存在的文件:' + cmd
-                cmd = 'unzip ' + git_name + '.zip'
+                log.info('7.开始备份文件:' + cmd)
+                log_str += '7.开始备份文件:' + cmd
+                cmd = 'unzip dist.zip'
                 con.run(cmd)
                 log.info('9.解压文件:' + cmd)
                 log_str += '9.解压文件:' + cmd
-                # cmd = 'mv ' + mv_code_path + '/' + git_name + ' ' + git_name
-                # con.run(cmd)
-                # log('info', '10.转移文件:' + cmd)
-                # log_str += '10.转移文件:' + cmd
                 message_bit = '发布成功...'
                 log_status = 1
         except Exception as e:
