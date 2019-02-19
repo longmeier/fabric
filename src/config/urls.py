@@ -15,8 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from ..tools import views
-
+from tools import views
 urlpatterns = [
     path(r'look_log/', views.look_log),
     path(r'get_log/', views.get_log),
