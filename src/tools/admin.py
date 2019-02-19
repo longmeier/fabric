@@ -132,8 +132,8 @@ class SettingsAdmin(admin.ModelAdmin):
                         con.run(after_line)
                         log.info('7.执行拉取后的操作完成:%s' % after_line)
                         log_str += '7.执行拉取后的操作完成:%s' % after_line
-                log_str += '7.执行拉取后的操作完成;'
-                message_bit = '发布成功...'
+                log_str += '8.%s->发布成功...' % git_name
+                message_bit = '8.%s->发布成功...' % git_name
                 log_status = 1
         except Exception as e:
             log.error('发布出错error:%s', str(e))
@@ -342,6 +342,8 @@ class FrontEndAdmin(admin.ModelAdmin):
                 log_str += '9.解压文件:' + cmd
                 message_bit = '发布成功...'
                 log_status = 1
+            log.info('10.%s->发布成功...' % git_name)
+            log_str += '10.%s->发布成...' % git_name
         except Exception as e:
             log.error('发布出错error:%s' % str(e))
             log_str += 'error:%s' % str(e)
