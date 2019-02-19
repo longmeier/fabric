@@ -160,6 +160,7 @@ class FrontEndAdmin(admin.ModelAdmin):
     exclude = ('by_user', 'before_cmd')
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
+    change_list_template = "tools/change_list.html"
 
     def check_info(self, request, queryset):
         qs = queryset[0]

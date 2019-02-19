@@ -1,0 +1,62 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">首页</a>
+        &rsaquo; <a href="/admin/tools">tools</a>
+        &rsaquo; 发布日志
+    </div>
+{% endblock %}
+
+{% block extrahead %}
+    <script type="text/javascript" src="{% static 'js/jquery-1.12.4.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var timer = setInterval(function(){checkDone(timer)},1000);
+        });
+     function checkDone() {
+        $.post('/get_log/',{},function (data) {
+               var html_='';
+               for(i=0; i<data.length;i++){
+                 html_+='<li class="msgli">' + data[i] + '</li>';
+               }
+               $('#msg').html(html_);
+            }
+         )
+     }
+    </script>
+
+{% endblock %}
+
+{% block extrastyle %}
+    <style>
+     .msg{
+     color:#fff;
+     margin-left:10px;
+     }
+     .msg {
+
+list-style:none;
+}
+    </style>
+{% endblock %}
+
+{% block title %}日志{% endblock %}
+
+{% block content %}
+    <div class="ibox">
+        <div class="ibox-title">
+            <h3></h3>
+        </div>
+        <div class="ibox-content" style="background:#040404;">
+            <div class="msg"   >
+            <ur id="msg">
+            </ur>
+
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}

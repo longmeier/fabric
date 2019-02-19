@@ -67,11 +67,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+MEDIA_ROOT = env('MEDIA_ROOT', default=os.path.join(BASE_DIR, 'media/'))
+print('MEDIA_ROOT', MEDIA_ROOT)
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), MEDIA_ROOT],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
