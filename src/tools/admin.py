@@ -264,12 +264,16 @@ class FrontEndAdmin(admin.ModelAdmin):
                     cmd = tmp_code_path + '/' + git_name
                     log.info('0.进入项目' + cmd)
                     log_str += '0.进入项目' + cmd
+                    cmd = 'git branch -a'
+                    os.system(cmd)
+                    log.info('1.连接远端分支' + cmd)
+                    log_str += '1.连接远端分支' + cmd
                     os.chdir(cmd)
                     cmd = ' git checkout ' + git_branch
                     log.info('1.切换分支' + cmd)
                     log_str += '1.切换分支' + cmd
                     os.system(cmd)
-                    cmd = ' git pull '
+                    cmd = ' git pull origin ' + git_branch
                     log.info('1.获取最新代码' + cmd)
                     log_str += '1.获取最新代码' + cmd
                     os.system(cmd)
