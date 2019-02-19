@@ -292,12 +292,16 @@ class FrontEndAdmin(admin.ModelAdmin):
                 cmd = tmp_code_path + '/' + git_name
                 log.info('3.进入' + cmd)
                 os.chdir(cmd)
+            log.info('3.执行yarn命令:yarn')
+            log_str += '3.执行yarn命令:yarn'
             yarn_line = os.popen('yarn')  # 执行该命令
             info = yarn_line.readlines()  # 读取命令行的输出到一个list
             for line in info:  # 按行遍历
                 line = line.strip('\r\n')
                 log.info('[yarn]' + line)
 
+            log.info('3.执行npm命令:npm run build')
+            log_str += '3.执行npm命令:npm run build'
             npm_line = os.popen('npm run build')
             info = npm_line.readlines()  # 读取命令行的输出到一个list
             for line in info:  # 按行遍历
