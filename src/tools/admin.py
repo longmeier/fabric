@@ -279,10 +279,10 @@ class FrontEndAdmin(admin.ModelAdmin):
                     os.system(cmd)
                 except Exception as e:
                     log.error('0.项目error' + str(e))
-                    cmd = 'rm -rf ' + git_name
-                    os.system(cmd)
-                    log.info('1.删除已存在的项目:' + cmd)
-                    log_str += '1.删除已存在的项目:' + cmd
+                    # cmd = 'rm -rf ' + git_name
+                    # os.system(cmd)
+                    # log.info('1.删除已存在的项目:' + cmd)
+                    # log_str += '1.删除已存在的项目:' + cmd
             else:
                 cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url
                 os.system(cmd)
