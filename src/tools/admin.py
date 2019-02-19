@@ -262,13 +262,13 @@ class FrontEndAdmin(admin.ModelAdmin):
                 log_str += cmd
                 try:
                     cmd = tmp_code_path + '/' + git_name
+                    os.chdir(cmd)
                     log.info('0.进入项目' + cmd)
                     log_str += '0.进入项目' + cmd
                     cmd = 'git branch -a'
                     os.system(cmd)
                     log.info('1.连接远端分支' + cmd)
                     log_str += '1.连接远端分支' + cmd
-                    os.chdir(cmd)
                     cmd = ' git checkout ' + git_branch
                     log.info('1.切换分支' + cmd)
                     log_str += '1.切换分支' + cmd
@@ -279,10 +279,10 @@ class FrontEndAdmin(admin.ModelAdmin):
                     os.system(cmd)
                 except Exception as e:
                     log.error('0.项目error' + str(e))
-                    # cmd = 'rm -rf ' + git_name
-                    # os.system(cmd)
-                    # log.info('1.删除已存在的项目:' + cmd)
-                    # log_str += '1.删除已存在的项目:' + cmd
+                    cmd = 'rm -rf ' + git_name
+                    os.system(cmd)
+                    log.info('1.删除已存在的项目:' + cmd)
+                    log_str += '1.删除已存在的项目:' + cmd
             else:
                 cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url
                 os.system(cmd)
