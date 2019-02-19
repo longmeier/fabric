@@ -18,6 +18,7 @@ class SettingsAdmin(admin.ModelAdmin):
     exclude = ('by_user',)
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
+    change_list_template = "tools/change_list2.html"
 
     def check_info(self, request, queryset):
         qs = queryset[0]
