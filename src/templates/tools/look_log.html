@@ -19,7 +19,13 @@
         $.post('/get_log/',{},function (data) {
                var html_='';
                for(i=0; i<data.length;i++){
-                 html_+='<li class="msgli">' + data[i] + '</li>';
+                    var line = data[i];
+                    if(line.indexOf("成功") >= 0 ) {
+                        html_+='<li class="msgli">' + data[i] + '</li>';
+                    }else{
+                        html_+='<li class="msgli2">' + data[i] + '</li>';
+                    }
+
                }
                $('#msg').html(html_);
             }
@@ -32,13 +38,14 @@
 {% block extrastyle %}
     <style>
      .msg{
-     color:#fff;
-     margin-left:10px;
+        color:#fff;
+        margin-left:10px;
+        list-style:none;
      }
-     .msg {
+     .msgli {
 
-list-style:none;
-}
+       color:#00FF00;
+     }
     </style>
 {% endblock %}
 
