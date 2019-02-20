@@ -132,6 +132,7 @@ class SettingsAdmin(admin.ModelAdmin):
                         con.run(after_line)
                         log.info('7.执行拉取后的操作完成:%s' % after_line)
                         log_str += '7.执行拉取后的操作完成:%s' % after_line
+                log.info('8.%s->发布成功...' % git_name)
                 log_str += '8.%s->发布成功...' % git_name
                 message_bit = '8.%s->发布成功...' % git_name
                 log_status = 1
