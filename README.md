@@ -1,21 +1,28 @@
 # fabric
 
 #### 介绍
-代码部署
+代码部署 
+开发环境是用django2 + Fabirc3 + python3开发的。
+可用于定制化小型公司的代码部署。
+部署用centos7 + gunicorn + nginx + mysql5.7
 
 #### 软件架构
 软件架构说明
-
+tools-前端、后端模型，发布命令不一样，所以写了两个models
+具体看admin.py 里面的命令。
+由于python在执行发布命令中有的命令耗时比较长可以把延迟时间加大一点
 
 #### 安装教程
 
-1. xxxx
-2. xxxx
-3. xxxx
+1. git pull
+2. python3 manage.py makemigrations
+3. python3 manage.py migrate
+2. pip install -r requirements.txt
+3. sudo supervisorctl restart fabric
 
 #### 使用说明
 
-1. xxxx
+1. 写的文档略有简洁，因为本身并不复杂，会django的话一般都能看的懂。
 2. xxxx
 3. xxxx
 
