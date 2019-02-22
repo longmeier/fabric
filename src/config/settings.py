@@ -91,7 +91,7 @@ AUTH_USER_MODEL = 'users.User'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
+# 数据库连接
 DATABASES = {
     'default': env.db('DATABASE_URL', default='mysql://localhost/bolin_dev'),
 }

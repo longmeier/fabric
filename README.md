@@ -1,24 +1,44 @@
 # fabric
 
 #### 介绍
-代码部署 
+该项目可用于定制化小型公司的代码部署。
 开发环境是用django2 + Fabirc3 + python3开发的。
-可用于定制化小型公司的代码部署。
 部署用centos7 + gunicorn + nginx + mysql5.7
 
 #### 软件架构
 软件架构说明
-tools-前端、后端模型，发布命令不一样，所以写了两个models
-具体看admin.py 里面的命令。
+src/config django一些配置包括数据库、日志、url、静态文件配置
+src/templates 页面模板
+src/tools  数据库models字段的定义、执行命令具体看admin.py 里面的代码。
 由于python在执行发布命令中有的命令耗时比较长可以把延迟时间加大一点
 
 #### 安装教程
-
-1. git pull
-2. python3 manage.py makemigrations
-3. python3 manage.py migrate
-2. pip install -r requirements.txt
-3. sudo supervisorctl restart fabric
+默认python环境已经装好
+1. 克隆代码
+   git clone https://github.com/longmeier/fabric.git
+2. 添加 配置私密文件 cd fabric & touch .env
+3. .env文件要保存内容
+    DATABASE_URL="mysql://root:1234@127.0.0.1/fabric"  
+    TST_PYER_PWD="xxx"  ;测试服务器 pyer 密码
+    TST_ROOT_PWD="xxx"  ;测试服务器 root 密码
+    PRD_PYER_PWD="xxx"
+    PRD_ROOT_PWD="xxx"
+    
+4. 同步数据库 创建用户
+   python manage.py makemigrations & python manage.py migrate  
+5. 安装环境
+   pip install -r requirements.txt
+6. 重启项目
+   sudo supervisorctl restart fabric
+7. gunicorn配置
+    from __future__ import unicode_literals
+    import multiprocessing
+    
+    bind = "127.0.0.1:9034"
+    timeout = 60 * 30
+    workers = multiprocessing.cpu_count()
+    loglevel = "info"
+    proc_name = "fabric"
 
 #### 使用说明
 
