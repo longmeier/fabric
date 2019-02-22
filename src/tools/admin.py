@@ -13,8 +13,8 @@ log = logging.getLogger(__name__)
 class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
-    list_display = ('id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
-    list_display_links = ['id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
+    list_display = ('id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
+    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
     exclude = ('by_user',)
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
@@ -168,8 +168,8 @@ class SettingsAdmin(admin.ModelAdmin):
 class FrontEndAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
-    list_display = ('id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
-    list_display_links = ['id', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
+    list_display = ('id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
+    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
     exclude = ('by_user', 'before_cmd')
     actions = ('check_info', 'deploy_project', )
     ordering = ['-id']
@@ -397,8 +397,8 @@ class DeployStartAdmin(admin.ModelAdmin):
 class DeployLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('by_user', 'status')
-    list_display = ('id', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status')
-    list_display_links = ['id', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status']
+    list_display = ('id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status')
+    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status']
     ordering = ['-id']
     readonly_fields = ('name', 'git_branch', 'server_flag',  'project_flag', 'by_user', 'content', 'status')
 
