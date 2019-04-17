@@ -346,9 +346,9 @@ class FrontEndAdmin(admin.ModelAdmin):
                     log.info('5-2.删除目标文件rm -rf dist.zip')
                     con.run('rm -rf dist.zip')
                     cmd = (tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
-                    con.put(tmp_code_path + '/' + git_name + '/dist.zip', code_path + '/dist.zip')
                     log.info('6.上传zip文件:' + str(cmd))
                     log_str += '6.上传zip文件:' + str(cmd)
+                    con.put(tmp_code_path + '/' + git_name + '/dist.zip', code_path + '/dist.zip')
                     cmd = 'rm -rf dist2/'
                     con.run(cmd)
                     log.info('7.删除以前备份文件:' + cmd)
