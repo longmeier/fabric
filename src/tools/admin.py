@@ -341,7 +341,9 @@ class FrontEndAdmin(admin.ModelAdmin):
                 con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
                 log.info('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
                 log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
+                log.info('5-1.进去服务器路径%s' % (code_path))
                 with con.cd(code_path):
+                    log.info('5-2.删除目标文件rm -rf dist.zip')
                     con.run('rm -rf dist.zip')
                     cmd = (tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
                     con.put(tmp_code_path + '/' + git_name + '/dist.zip', code_path + '/dist.zip')
