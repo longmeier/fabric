@@ -355,7 +355,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                     con.run(cmd)
                     log.info('7.删除以前备份文件:' + cmd)
                     log_str += '7.删除以前备份文件:' + cmd
-                    cmd = 'mv dist dist2'
+                    cmd = 'cp -r dist dist2'
                     con.run(cmd)
                     log.info('7.开始备份文件:' + cmd)
                     log_str += '7.开始备份文件:' + cmd
