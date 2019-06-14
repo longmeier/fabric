@@ -14,9 +14,10 @@ class SettingsAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
     list_display = ('id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
-    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
+    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user',
+                          'memo']
     exclude = ('by_user',)
-    actions = ('check_info', 'deploy_project', )
+    actions = ('check_info', 'deploy_project',)
     ordering = ['-id']
     change_list_template = "tools/change_list2.html"
 
@@ -39,14 +40,14 @@ class SettingsAdmin(admin.ModelAdmin):
                 ssh_pwd = settings.TST_ROOT_PWD
             elif qs.server_flag == 2:  # 生产环境
                 ssh_pwd = settings.PRD_ROOT_PWD
-
+        log.info('开启后端发布...%s', str(qs.git_branch))
         ssh_ip = qs.server_ip
         tmp_code_path = qs.tmp_code_path
         message_bit, ssh_flag, git_flag = '', False, False
 
         try:
             # 连接服务器
-            con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
+            con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
             git_url = qs.git_url
             # 检测git连接
             with con.cd(tmp_code_path):
@@ -112,7 +113,7 @@ class SettingsAdmin(admin.ModelAdmin):
                         ssh_pwd = settings.PRD_ROOT_PWD
 
                 # 连接服务器
-                con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
+                con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
                 log.info('1.连接%s@%s服务器完成:' % (ssh_user, ssh_ip))
                 log_str += '1.连接%s@%s服务器完成:' % (ssh_user, ssh_ip)
 
@@ -152,7 +153,7 @@ class SettingsAdmin(admin.ModelAdmin):
             DeployLog.objects.filter(id=dobj.id).update(content=log_str, status=log_status)
 
         else:
-            message_bit='该%s项目有人正在发布，请等待...' % git_name
+            message_bit = '该%s项目有人正在发布，请等待...' % git_name
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
@@ -169,9 +170,10 @@ class FrontEndAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('name', 'status')
     list_display = ('id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo')
-    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user', 'memo']
+    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'server_ip', 'git_url', 'by_user',
+                          'memo']
     exclude = ('by_user', 'before_cmd')
-    actions = ('check_info', 'deploy_project', )
+    actions = ('check_info', 'deploy_project',)
     ordering = ['-id']
     change_list_template = "tools/change_list.html"
 
@@ -208,7 +210,7 @@ class FrontEndAdmin(admin.ModelAdmin):
             log.info('检测项目状态...')
 
             # 连接服务器
-            con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
+            con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
             with con.cd('~'):
                 con.run('ls')
             ret = con.is_connected
@@ -330,25 +332,25 @@ class FrontEndAdmin(admin.ModelAdmin):
                     log.info('[npm]' + line)
                 cmd = tmp_code_path + '/' + git_name + ''
                 os.chdir(cmd)
-                os.system('rm -rf dist.zip')
+                os.system('rm -rf dist.tar')
                 log.info('4.进入打包路径:' + cmd)
                 log_str += '4.进入打包路径:' + cmd
-                cmd = 'zip -r dist.zip dist'
+                cmd = 'tar -zcvf dist.tar dist'
                 os.system(cmd)
                 log.info('4.开始打包文件:' + cmd)
                 log_str += '4.开始打包文件:' + cmd
                 # 连接服务器
-                con = Connection(ssh_user+'@'+ssh_ip, connect_kwargs={'password': ssh_pwd})
+                con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
                 log.info('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
                 log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
                 log.info('5-1.进去服务器路径%s' % str(code_path))
                 with con.cd(code_path):
-                    log.info('5-2.删除目标文件rm -rf dist.zip')
-                    con.run('rm -rf dist.zip')
-                    cmd = (tmp_code_path + '/' + git_name + '.zip', code_path + '/' + git_name + '.zip')
-                    log.info('6.上传zip文件:' + str(cmd))
-                    log_str += '6.上传zip文件:' + str(cmd)
-                    con.put(tmp_code_path + '/' + git_name + '/dist.zip', code_path + '/dist.zip')
+                    log.info('5-2.删除目标文件rm -rf dist.tar')
+                    con.run('rm -rf dist.tar')
+                    cmd = (tmp_code_path + '/' + git_name + '.tar', code_path + '/' + git_name + '.tar')
+                    log.info('6.上传tar文件:' + str(cmd))
+                    log_str += '6.上传tar文件:' + str(cmd)
+                    con.put(tmp_code_path + '/' + git_name + '/dist.tar', code_path + '/dist.tar')
                     cmd = 'rm -rf dist2/'
                     con.run(cmd)
                     log.info('7.删除以前备份文件:' + cmd)
@@ -357,7 +359,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                     con.run(cmd)
                     log.info('7.开始备份文件:' + cmd)
                     log_str += '7.开始备份文件:' + cmd
-                    cmd = 'unzip dist.zip'
+                    cmd = 'tar zxvf dist.tar'
                     con.run(cmd)
                     log.info('9.解压文件:' + cmd)
                     log_str += '9.解压文件:' + cmd
@@ -399,10 +401,12 @@ class DeployStartAdmin(admin.ModelAdmin):
 class DeployLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('by_user', 'status')
-    list_display = ('id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status')
-    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status']
+    list_display = (
+    'id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status')
+    list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user',
+                          'status']
     ordering = ['-id']
-    readonly_fields = ('name', 'git_branch', 'server_flag',  'project_flag', 'by_user', 'content', 'status')
+    readonly_fields = ('name', 'git_branch', 'server_flag', 'project_flag', 'by_user', 'content', 'status')
 
 
 admin.site.disable_action('delete_selected')
