@@ -363,6 +363,11 @@ class FrontEndAdmin(admin.ModelAdmin):
                     con.run(cmd)
                     log.info('9.解压文件:' + cmd)
                     log_str += '9.解压文件:' + cmd
+                    for after_line in after_list:
+                        if after_line:
+                            con.run(after_line)
+                            log.info('10.执行拉取后的操作完成:%s' % after_line)
+                            log_str += '10.执行拉取后的操作完成:%s' % after_line
                     message_bit = '发布成功...'
                     log_status = 1
                 log.info('10.%s->发布成功...' % git_name)
