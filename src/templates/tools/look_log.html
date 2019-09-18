@@ -12,39 +12,39 @@
 <script type="text/javascript" src="{% static 'js/jquery-1.12.4.js' %}"></script>
 <script type="text/javascript" src="https://cdn.bootcss.com/sockjs-client/1.4.0/sockjs.min.js"></script>
 <script type="text/javascript" src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
-<script>
-    if (typeof(WebSocket) === "function") {
-            console.log('ws协议...');
-            ws = new WebSocket('ws://localhost:15674/ws');
+<!--<script>-->
+    <!--if (typeof(WebSocket) === "function") {-->
+            <!--console.log('ws协议...');-->
+            <!--ws = new WebSocket('ws://localhost:15674/ws');-->
+            <!--&lt;!&ndash;ws = new SockJS('http://localhost:15674/stomp');&ndash;&gt;-->
+    <!--} else {-->
+            <!--console.log('http协议...');-->
             <!--ws = new SockJS('http://localhost:15674/stomp');-->
-    } else {
-            console.log('http协议...');
-            ws = new SockJS('http://localhost:15674/stomp');
-    }
-    var client = Stomp.over(ws);
-    client.heartbeat.outgoing = 0;
-	client.heartbeat.incoming = 0;
-    var on_connect = function(x) {
-		//data.body是接收到的数据
-		client.subscribe("/queue/fabric_log", function(data) {
-			var msg = data.body;
-			if(msg.indexOf("成功") >= 0 ) {
-               html_+='<li class="msgli">' + msg + '</li>';
-            }else{
-               html_+='<li class="msgli2">' + msg + '</li>';
-            }
-            $('#msg').prepend(html_);
-		});
-	};
+    <!--}-->
+    <!--var client = Stomp.over(ws);-->
+    <!--client.heartbeat.outgoing = 0;-->
+	<!--client.heartbeat.incoming = 0;-->
+    <!--var on_connect = function(x) {-->
+		<!--//data.body是接收到的数据-->
+		<!--client.subscribe("/queue/fabric_log", function(data) {-->
+			<!--var msg = data.body;-->
+			<!--if(msg.indexOf("成功") >= 0 ) {-->
+               <!--html_+='<li class="msgli">' + msg + '</li>';-->
+            <!--}else{-->
+               <!--html_+='<li class="msgli2">' + msg + '</li>';-->
+            <!--}-->
+            <!--$('#msg').prepend(html_);-->
+		<!--});-->
+	<!--};-->
 
-    var on_error =  function() {
-        console.log('error');
-    };
-    client.connect('bolin', 'bolin1024', on_connect, on_error, '/');
+    <!--var on_error =  function() {-->
+        <!--console.log('error');-->
+    <!--};-->
+    <!--client.connect('bolin', 'bolin1024', on_connect, on_error, '/');-->
 
-	console.log(">>>连接上http://localhost:15674");
+	<!--console.log(">>>连接上http://localhost:15674");-->
 
-</script>
+<!--</script>-->
 <!--<script type="text/javascript">-->
         <!--$(document).ready(function () {-->
             <!--var timer = setInterval(function(){checkDone(timer)},1000);-->
