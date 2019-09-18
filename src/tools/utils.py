@@ -3,12 +3,13 @@ import time
 from django.conf import settings
 
 
-def create_msg(msg):
+def create_msg(msg, msg_=''):
     """
     消息发送方
     :param msg:
     :return:
     """
+    msg = msg + msg_
     rabbit_name = settings.RABBIT_NAME
     rabbit_pwd = settings.RABBIT_PWD
     rabbit_url = settings.RABBIT_URL
