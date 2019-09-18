@@ -15,11 +15,11 @@
 <script>
     if (typeof(WebSocket) === "function") {
             console.log('ws协议...');
-            ws = new WebSocket('ws://localhost:15674/ws');
+            ws = new WebSocket('ws://192.168.8.253:15674/ws');
             <!--ws = new SockJS('http://localhost:15674/stomp');-->
     } else {
             console.log('http协议...');
-            ws = new SockJS('http://localhost:15674/stomp');
+            ws = new SockJS('http://192.168.8.253:15674/stomp');
     }
     var client = Stomp.over(ws);
     client.heartbeat.outgoing = 0;
