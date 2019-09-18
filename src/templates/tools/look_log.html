@@ -1,6 +1,7 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 {% block breadcrumbs %}
+<head><meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"></head>
 <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">首页</a>
     &rsaquo; <a href="/admin/tools">tools</a>
