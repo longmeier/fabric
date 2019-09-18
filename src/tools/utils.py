@@ -4,6 +4,7 @@ from django.conf import settings
 import logging
 log = logging.getLogger(__name__)
 
+
 def create_msg(msg, msg_=''):
     """
     消息发送方
