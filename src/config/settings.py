@@ -101,7 +101,7 @@ PRD_PYER_PWD = env('PRD_PYER_PWD', default='https://q3.bolineyecare.com')
 PRD_ROOT_PWD = env('PRD_ROOT_PWD', default='https://q3.bolineyecare.com')
 RABBIT_NAME = env('RABBIT_NAME', default='https://q3.bolineyecare.com')
 RABBIT_PWD = env('RABBIT_PWD', default='https://q3.bolineyecare.com')
-RABBIT_URL = env('RABBIT_URl', default='https://q3.bolineyecare.com')
+RABBIT_URL = env('RABBIT_URL', default='https://q3.bolineyecare.com')
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
