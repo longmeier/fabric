@@ -15,7 +15,7 @@
 <script>
     if (typeof(WebSocket) === "function") {
             console.log('ws协议...');
-            ws = new WebSocket('ws://192.168.8.253.com:15674/ws');
+            ws = new WebSocket('ws://192.168.8.253:15674/ws');
             <!--ws = new SockJS('http://192.168.8.253.com:15674/stomp');-->
     } else {
             console.log('http协议...');
