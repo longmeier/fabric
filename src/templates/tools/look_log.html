@@ -13,13 +13,13 @@
 <script type="text/javascript" src="https://cdn.bootcss.com/sockjs-client/1.4.0/sockjs.min.js"></script>
 <script type="text/javascript" src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
 <script>
-    var ws = new WebSocket('ws://192.168.8.253:15674/ws');
+    var ws = new WebSocket('ws://127.0.0.1:15674/ws');
     var client = Stomp.over(ws);
     client.heartbeat.outgoing = 0;
 	client.heartbeat.incoming = 0;
     var on_connect = function(x) {
 		//data.body是接收到的数据
-		client.subscribe("/queue/hh", function(data) {
+		client.subscribe("/queue/fabric_log", function(data) {
 			var msg = data.body;
 			if(msg.indexOf("成功") >= 0 ) {
                html_+='<li class="msgli">' + msg + '</li>';
@@ -35,7 +35,7 @@
     };
     client.connect('bolin', 'bolin1024', on_connect, on_error, '/');
 
-	console.log(">>>连接上http://192.168.8.253:15674");
+	console.log(">>>连接上http://127.0.0.1:15674");
 
 </script>
 <!--<script type="text/javascript">-->
