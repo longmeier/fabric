@@ -1,42 +1,70 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 {% block breadcrumbs %}
-    <div class="breadcrumbs">
-        <a href="{% url 'admin:index' %}">首页</a>
-        &rsaquo; <a href="/admin/tools">tools</a>
-        &rsaquo; 发布日志
-    </div>
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">首页</a>
+    &rsaquo; <a href="/admin/tools">tools</a>
+    &rsaquo; 发布日志
+</div>
 {% endblock %}
 
 {% block extrahead %}
-    <script type="text/javascript" src="{% static 'js/jquery-1.12.4.js' %}"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var timer = setInterval(function(){checkDone(timer)},1000);
-        });
-     function checkDone() {
-        $.post('/get_log/',{},function (data) {
-               var html_='';
-               for(i=0; i<data.length;i++){
-                    var line = data[i];
-                    if(line.indexOf("成功") >= 0 ) {
-                        html_+='<li class="msgli">' + data[i] + '</li>';
-                    }else{
-                        html_+='<li class="msgli2">' + data[i] + '</li>';
-                    }
-
-               }
-               $('#msg').html(html_);
+<script type="text/javascript" src="{% static 'js/jquery-1.12.4.js' %}"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script type="text/javascript" src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
+<script>
+    var ws = new WebSocket('ws://192.168.8.253:15674/ws');
+    var client = Stomp.over(ws);
+    client.heartbeat.outgoing = 0;
+	client.heartbeat.incoming = 0;
+    var on_connect = function(x) {
+		//data.body是接收到的数据
+		client.subscribe("/queue/hh", function(data) {
+			var msg = data.body;
+			if(msg.indexOf("成功") >= 0 ) {
+               html_+='<li class="msgli">' + msg + '</li>';
+            }else{
+               html_+='<li class="msgli2">' + msg + '</li>';
             }
-         )
-     }
-    </script>
+            $('#msg').prepend(html_);
+		});
+	};
+
+    var on_error =  function() {
+        console.log('error');
+    };
+    client.connect('bolin', 'bolin1024', on_connect, on_error, '/');
+
+	console.log(">>>连接上http://192.168.8.253:15674");
+
+</script>
+<!--<script type="text/javascript">-->
+        <!--$(document).ready(function () {-->
+            <!--var timer = setInterval(function(){checkDone(timer)},1000);-->
+        <!--});-->
+     <!--function checkDone() {-->
+        <!--$.post('/get_log/',{},function (data) {-->
+               <!--var html_='';-->
+               <!--for(i=0; i<data.length;i++){-->
+                    <!--var line = data[i];-->
+                    <!--if(line.indexOf("成功") >= 0 ) {-->
+                        <!--html_+='<li class="msgli">' + data[i] + '</li>';-->
+                    <!--}else{-->
+                        <!--html_+='<li class="msgli2">' + data[i] + '</li>';-->
+                    <!--}-->
+
+               <!--}-->
+               <!--$('#msg').html(html_);-->
+            <!--}-->
+         <!--)-->
+     <!--}-->
+
+<!--</script>-->
 
 {% endblock %}
 
 {% block extrastyle %}
-    <style>
+<style>
      .msg{
         color:#fff;
         margin-left:10px;
@@ -46,24 +74,25 @@
 
        color:#00FF00;
      }
-    </style>
+
+</style>
 {% endblock %}
 
 {% block title %}日志{% endblock %}
 
 {% block content %}
-    <div class="ibox">
-        <div class="ibox-title">
-            <h3></h3>
-        </div>
-        <div class="ibox-content" style="background:#040404;">
-            <div class="msg"   >
+<div class="ibox">
+    <div class="ibox-title">
+        <h3></h3>
+    </div>
+    <div class="ibox-content" style="background:#040404;">
+        <div class="msg">
             <ur id="msg">
             </ur>
 
-            </div>
-
-
         </div>
+
+
     </div>
+</div>
 {% endblock %}
