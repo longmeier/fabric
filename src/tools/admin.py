@@ -42,7 +42,7 @@ class SettingsAdmin(admin.ModelAdmin):
             elif qs.server_flag == 2:  # 生产环境
                 ssh_pwd = settings.PRD_ROOT_PWD
         log.info('开启后端发布...%s', str(qs.git_branch))
-        create_msg('开启后端发布...%s', str(qs.git_branch))
+        create_msg('开启后端发布...' + str(qs.git_branch))
         ssh_ip = qs.server_ip
         tmp_code_path = qs.tmp_code_path
         message_bit, ssh_flag, git_flag = '', False, False
@@ -68,7 +68,7 @@ class SettingsAdmin(admin.ModelAdmin):
                 ssh_flag = True
         except Exception as e:
             log.info('检查配置出错error:%s' % str(e))
-            create_msg('检查配置出错error:%s' % str(e))
+            create_msg('检查配置出错error:'+ str(e))
         if ssh_flag and git_flag:
             message_bit = '服务器连接正常'
         else:
@@ -119,28 +119,28 @@ class SettingsAdmin(admin.ModelAdmin):
                 # 连接服务器
                 con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
                 log.info('1.连接%s@%s服务器完成:' % (ssh_user, ssh_ip))
-                create_msg('1.连接%s@%s服务器完成:' % (ssh_user, ssh_ip))
+                create_msg('1.连接' + ssh_user + '@' + ssh_ip + '服务器完成:')
                 log_str += '1.连接%s@%s服务器完成:' % (ssh_user, ssh_ip)
 
                 if '.' in git_name:
                     git_name = git_name.split('.')[0]
                 log.info('2.获取git项目名称完成:%s' % git_url)
-                create_msg('2.获取git项目名称完成:%s' % git_url)
+                create_msg('2.获取git项目名称完成:' + git_url)
                 log_str += '2.获取git项目名称完成:%s' % git_url
                 # 检测git连接
                 with con.cd(code_path + '/' + git_name):
                     log.info('3.进入目标路径完成:%s' % code_path + '/' + git_name)
-                    create_msg('3.进入目标路径完成:%s' % code_path + '/' + git_name)
+                    create_msg('3.进入目标路径完成:'+ code_path + '/' + git_name)
                     log_str += '3.进入目标路径完成:%s' % code_path + '/' + git_name
                     for before_line in before_list:
                         if before_line:
                             con.run(before_line)
                             log.info('4.执行拉取前的操作完成:%s' % before_line)
-                            create_msg('4.执行拉取前的操作完成:%s' % before_line)
+                            create_msg('4.执行拉取前的操作完成:' + before_line)
                             log_str += '4.执行拉取前的操作完成:%s' % before_line
                     cmd = 'git pull origin ' + git_branch
                     log.info('5.执行拉取代码操作完成:%s' % cmd)
-                    create_msg('5.执行拉取代码操作完成:%s' % cmd)
+                    create_msg('5.执行拉取代码操作完成:'+ cmd)
                     log_str += '5.执行拉取代码操作完成:%s' % cmd
                     con.run(cmd)
                     log.info('6.拉取代码完成;')
@@ -150,16 +150,16 @@ class SettingsAdmin(admin.ModelAdmin):
                         if after_line:
                             con.run(after_line)
                             log.info('7.执行拉取后的操作完成:%s' % after_line)
-                            create_msg('7.执行拉取后的操作完成:%s' % after_line)
+                            create_msg('7.执行拉取后的操作完成:'+ after_line)
                             log_str += '7.执行拉取后的操作完成:%s' % after_line
                     log.info('8.%s->发布成功...' % git_name)
-                    create_msg('8.%s->发布成功...' % git_name)
+                    create_msg('8.%s->发布成功...'+ git_name)
                     log_str += '8.%s->发布成功...' % git_name
                     message_bit = '8.%s->发布成功...' % git_name
                     log_status = 1
             except Exception as e:
                 log.error('发布出错error:%s', str(e))
-                create_msg('发布出错error:%s', str(e))
+                create_msg('发布出错error:'+ str(e))
                 log_str += 'error:%s' % str(e)
                 message_bit = '发布失败，详情请查看日志。'
             DeployStart.objects.filter(id=obj.id).update(status=1)
@@ -375,10 +375,10 @@ class FrontEndAdmin(admin.ModelAdmin):
                 # 连接服务器
                 con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
                 log.info('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
-                create_msg('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
+                create_msg('5.连接服务器'+ssh_user+'@'+ssh_ip+'完成')
                 log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
                 log.info('5-1.进去服务器路径%s' % str(code_path))
-                create_msg('5-1.进去服务器路径%s' % str(code_path))
+                create_msg('5-1.进去服务器路径'+ str(code_path))
                 with con.cd(code_path):
                     log.info('5-2.删除目标文件rm -rf dist.tar')
                     create_msg('5-2.删除目标文件rm -rf dist.tar')
@@ -407,16 +407,16 @@ class FrontEndAdmin(admin.ModelAdmin):
                         if after_line:
                             con.run(after_line)
                             log.info('10.执行拉取后的操作完成:%s' % after_line)
-                            create_msg('10.执行拉取后的操作完成:%s' % after_line)
+                            create_msg('10.执行拉取后的操作完成:' + after_line)
                             log_str += '10.执行拉取后的操作完成:%s' % after_line
                     message_bit = '发布成功...'
                     log_status = 1
                 log.info('10.%s->发布成功...' % git_name)
-                create_msg('10.%s->发布成功...' % git_name)
+                create_msg('10.%s->发布成功...'+ git_name)
                 log_str += '10.%s->发布成...' % git_name
             except Exception as e:
                 log.error('发布出错error:%s' % str(e))
-                create_msg('发布出错error:%s' % str(e))
+                create_msg('发布出错error:'+ str(e))
                 log_str += 'error:%s' % str(e)
                 message_bit = '发布失败，详情请查看日志。'
             DeployStart.objects.filter(id=obj.id).update(status=1)
@@ -450,7 +450,7 @@ class DeployLogAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     search_fields = ('by_user', 'status')
     list_display = (
-    'id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status')
+        'id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user', 'status')
     list_display_links = ['id', 'created', 'name', 'git_branch', 'server_flag', 'project_flag', 'content', 'by_user',
                           'status']
     ordering = ['-id']
