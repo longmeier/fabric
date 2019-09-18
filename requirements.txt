@@ -6,4 +6,5 @@ django_mysql==2.3.0
 gunicorn==19.8.1
 pymysql==0.9.3
 django-model-utils==3.1.2
-Fabric3
+Fabric3==2.4.0
+pika==1.1.0
