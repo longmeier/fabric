@@ -1,7 +1,8 @@
 import pika
 import time
 from django.conf import settings
-
+import logging
+log = logging.getLogger(__name__)
 
 def create_msg(msg, msg_=''):
     """
@@ -13,6 +14,7 @@ def create_msg(msg, msg_=''):
     rabbit_name = settings.RABBIT_NAME
     rabbit_pwd = settings.RABBIT_PWD
     rabbit_url = settings.RABBIT_URL
+    log.info('name:%s;pwd:%s;url:%s', str(rabbit_name), str(rabbit_pwd), str(rabbit_url))
     credentials = pika.PlainCredentials(rabbit_name, rabbit_pwd)
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=rabbit_url, port=5672, credentials=credentials))  # 定义连接池
