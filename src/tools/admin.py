@@ -5,7 +5,7 @@ from fabric import Connection
 from django.conf import settings
 import os
 import logging
-from .utils import create_msg
+from .utils import create_msg, rabbit_connect, rabbit_close
 
 log = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class SettingsAdmin(admin.ModelAdmin):
     change_list_template = "tools/change_list2.html"
 
     def check_info(self, request, queryset):
+        channel, connection = rabbit_connect()
         qs = queryset[0]
         user_flag = qs.user_flag
         # pyer用户
@@ -42,7 +43,7 @@ class SettingsAdmin(admin.ModelAdmin):
             elif qs.server_flag == 2:  # 生产环境
                 ssh_pwd = settings.PRD_ROOT_PWD
         log.info('开启后端发布...%s', str(qs.git_branch))
-        create_msg('开启后端发布...' + str(qs.git_branch))
+        create_msg(channel, '开启后端发布...' + str(qs.git_branch))
         ssh_ip = qs.server_ip
         tmp_code_path = qs.tmp_code_path
         message_bit, ssh_flag, git_flag = '', False, False
@@ -64,20 +65,22 @@ class SettingsAdmin(admin.ModelAdmin):
             ret = con.is_connected
             if ret:
                 log.info('1.连接服务器成功....')
-                create_msg('1.连接服务器成功....')
+                create_msg(channel, '1.连接服务器成功....')
                 ssh_flag = True
         except Exception as e:
             log.info('检查配置出错error:%s' % str(e))
-            create_msg('检查配置出错error:'+ str(e))
+            create_msg(channel, '检查配置出错error:' + str(e))
         if ssh_flag and git_flag:
             message_bit = '服务器连接正常'
         else:
             message_bit = '服务器连接异常，请查看日志'
+        rabbit_close(connection)
         self.message_user(request, '%s' % message_bit)
 
     check_info.short_description = '检查配置信息'
 
     def deploy_project(self, request, queryset):
+        channel, connection = rabbit_connect()
         qs = queryset[0]
         user_flag = qs.user_flag
         server_flag = qs.server_flag
@@ -119,47 +122,47 @@ class SettingsAdmin(admin.ModelAdmin):
                 # 连接服务器
                 con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
                 log.info('1.连接%s@%s服务器完成:' % (ssh_user, ssh_ip))
-                create_msg('1.连接' + ssh_user + '@' + ssh_ip + '服务器完成:')
+                create_msg(channel, '1.连接' + ssh_user + '@' + ssh_ip + '服务器完成:')
                 log_str += '1.连接%s@%s服务器完成:' % (ssh_user, ssh_ip)
 
                 if '.' in git_name:
                     git_name = git_name.split('.')[0]
                 log.info('2.获取git项目名称完成:%s' % git_url)
-                create_msg('2.获取git项目名称完成:' + git_url)
+                create_msg(channel, '2.获取git项目名称完成:' + git_url)
                 log_str += '2.获取git项目名称完成:%s' % git_url
                 # 检测git连接
                 with con.cd(code_path + '/' + git_name):
                     log.info('3.进入目标路径完成:%s' % code_path + '/' + git_name)
-                    create_msg('3.进入目标路径完成:'+ code_path + '/' + git_name)
+                    create_msg(channel, '3.进入目标路径完成:' + code_path + '/' + git_name)
                     log_str += '3.进入目标路径完成:%s' % code_path + '/' + git_name
                     for before_line in before_list:
                         if before_line:
                             con.run(before_line)
                             log.info('4.执行拉取前的操作完成:%s' % before_line)
-                            create_msg('4.执行拉取前的操作完成:' + before_line)
+                            create_msg(channel, '4.执行拉取前的操作完成:' + before_line)
                             log_str += '4.执行拉取前的操作完成:%s' % before_line
                     cmd = 'git pull origin ' + git_branch
                     log.info('5.执行拉取代码操作完成:%s' % cmd)
-                    create_msg('5.执行拉取代码操作完成:'+ cmd)
+                    create_msg(channel, '5.执行拉取代码操作完成:' + cmd)
                     log_str += '5.执行拉取代码操作完成:%s' % cmd
                     con.run(cmd)
                     log.info('6.拉取代码完成;')
-                    create_msg('6.拉取代码完成;')
+                    create_msg(channel, '6.拉取代码完成;')
                     log_str += '6.拉取代码完成;'
                     for after_line in after_list:
                         if after_line:
                             con.run(after_line)
                             log.info('7.执行拉取后的操作完成:%s' % after_line)
-                            create_msg('7.执行拉取后的操作完成:'+ after_line)
+                            create_msg(channel, '7.执行拉取后的操作完成:' + after_line)
                             log_str += '7.执行拉取后的操作完成:%s' % after_line
                     log.info('8.%s->发布成功...' % git_name)
-                    create_msg('8.%s->发布成功...'+ git_name)
+                    create_msg(channel, '8.%s->发布成功...' + git_name)
                     log_str += '8.%s->发布成功...' % git_name
                     message_bit = '8.%s->发布成功...' % git_name
                     log_status = 1
             except Exception as e:
                 log.error('发布出错error:%s', str(e))
-                create_msg('发布出错error:'+ str(e))
+                create_msg(channel, '发布出错error:' + str(e))
                 log_str += 'error:%s' % str(e)
                 message_bit = '发布失败，详情请查看日志。'
             DeployStart.objects.filter(id=obj.id).update(status=1)
@@ -167,6 +170,7 @@ class SettingsAdmin(admin.ModelAdmin):
 
         else:
             message_bit = '该%s项目有人正在发布，请等待...' % git_name
+        rabbit_close(connection)
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
@@ -191,6 +195,7 @@ class FrontEndAdmin(admin.ModelAdmin):
     change_list_template = "tools/change_list.html"
 
     def check_info(self, request, queryset):
+        channel, connection = rabbit_connect()
         qs = queryset[0]
         user_flag = qs.user_flag
         # pyer用户
@@ -221,7 +226,7 @@ class FrontEndAdmin(admin.ModelAdmin):
 
         try:
             log.info('检测项目状态...')
-            create_msg('检测项目状态...')
+            create_msg(channel, '检测项目状态...')
 
             # 连接服务器
             con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
@@ -230,29 +235,31 @@ class FrontEndAdmin(admin.ModelAdmin):
             ret = con.is_connected
             if ret:
                 log.info('1.连接服务器完成....')
-                create_msg('1.连接服务器完成....')
+                create_msg(channel, '1.连接服务器完成....')
                 ssh_flag = True
             os.system('rm -rf ' + tmp_code_path + '/' + git_name)
             log.info('rm -rf ' + tmp_code_path + '/' + git_name)
-            create_msg('rm -rf ' + tmp_code_path + '/' + git_name)
+            create_msg(channel, 'rm -rf ' + tmp_code_path + '/' + git_name)
             os.system('git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
             log.info('git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
-            create_msg('git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
+            create_msg(channel, 'git clone ' + git_url + ' ' + tmp_code_path + '/' + git_name)
             log.info('2.拉取代码完成....')
-            create_msg('2.拉取代码完成....')
+            create_msg(channel, '2.拉取代码完成....')
             git_flag = True
         except Exception as e:
             log.info('检查配置出错error:%s', str(e))
-            create_msg('检查配置出错error:%s', str(e))
+            create_msg(channel, '检查配置出错error:%s', str(e))
         if ssh_flag and git_flag:
             message_bit = '服务器连接正常'
         else:
             message_bit = '服务器连接异常，请查看日志'
+        rabbit_close(connection)
         self.message_user(request, '%s' % message_bit)
 
     check_info.short_description = '检查配置信息'
 
     def deploy_project(self, request, queryset):
+        channel, connection = rabbit_connect()
         qs = queryset[0]
         user_flag = qs.user_flag
         server_flag = qs.server_flag
@@ -297,7 +304,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 # 本地代码拉取--打包
                 os.chdir(tmp_code_path)
                 log.info('0.进入打包目录:' + tmp_code_path)
-                create_msg('0.进入打包目录:' + tmp_code_path)
+                create_msg(channel, '0.进入打包目录:' + tmp_code_path)
                 log_str += '0.进入打包目录:' + tmp_code_path
                 if os.path.exists(git_name):
                     cmd = '0.' + tmp_code_path + '下面存在' + git_name + '目录'
@@ -307,21 +314,21 @@ class FrontEndAdmin(admin.ModelAdmin):
                         cmd = tmp_code_path + '/' + git_name
                         os.chdir(cmd)
                         log.info('0.进入项目' + cmd)
-                        create_msg('0.进入项目' + cmd)
+                        create_msg(channel, '0.进入项目' + cmd)
                         log_str += '0.进入项目' + cmd
                         cmd = 'git branch -a'
                         os.system(cmd)
                         log.info('1.连接远端分支' + cmd)
-                        create_msg('1.连接远端分支' + cmd)
+                        create_msg(channel, '1.连接远端分支' + cmd)
                         log_str += '1.连接远端分支' + cmd
                         cmd = ' git checkout ' + git_branch
                         log.info('1.切换分支' + cmd)
-                        create_msg('1.切换分支' + cmd)
+                        create_msg(channel, '1.切换分支' + cmd)
                         log_str += '1.切换分支' + cmd
                         os.system(cmd)
                         cmd = ' git pull origin ' + git_branch
                         log.info('1.获取最新代码' + cmd)
-                        create_msg('1.获取最新代码' + cmd)
+                        create_msg(channel, '1.获取最新代码' + cmd)
                         log_str += '1.获取最新代码' + cmd
                         os.system(cmd)
                     except Exception as e:
@@ -329,94 +336,94 @@ class FrontEndAdmin(admin.ModelAdmin):
                         cmd = 'rm -rf ' + git_name
                         os.system(cmd)
                         log.info('1.删除已存在的项目:' + cmd)
-                        create_msg('1.删除已存在的项目:' + cmd)
+                        create_msg(channel, '1.删除已存在的项目:' + cmd)
                         log_str += '1.删除已存在的项目:' + cmd
                 else:
                     cmd = 'git clone ' + '-b ' + git_branch + ' ' + git_url
                     os.system(cmd)
                     log.info('2.克隆指定分支代码:' + cmd)
-                    create_msg('2.克隆指定分支代码:' + cmd)
+                    create_msg(channel, '2.克隆指定分支代码:' + cmd)
                     log_str += '2.克隆指定分支代码:' + cmd
                     # 打包操作
                     cmd = tmp_code_path + '/' + git_name
                     log.info('3.进入' + cmd)
-                    create_msg('3.进入' + cmd)
+                    create_msg(channel, '3.进入' + cmd)
                     os.chdir(cmd)
                 log.info('3.执行yarn命令:yarn')
-                create_msg('3.执行yarn命令:yarn')
+                create_msg(channel, '3.执行yarn命令:yarn')
                 log_str += '3.执行yarn命令:yarn'
                 yarn_line = os.popen('yarn')  # 执行该命令
                 info = yarn_line.readlines()  # 读取命令行的输出到一个list
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
                     log.info('[yarn]' + line)
-                    create_msg('[yarn]' + line)
+                    create_msg(channel, '[yarn]' + line)
 
                 log.info('3.执行npm命令:npm run build')
-                create_msg('3.执行npm命令:npm run build')
+                create_msg(channel, '3.执行npm命令:npm run build')
                 log_str += '3.执行npm命令:npm run build'
                 npm_line = os.popen('npm run build')
                 info = npm_line.readlines()  # 读取命令行的输出到一个list
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
                     log.info('[npm]' + line)
-                    create_msg('[npm]' + line)
+                    create_msg(channel, '[npm]' + line)
                 cmd = tmp_code_path + '/' + git_name + ''
                 os.chdir(cmd)
                 os.system('rm -rf dist.tar')
                 log.info('4.进入打包路径:' + cmd)
-                create_msg('4.进入打包路径:' + cmd)
+                create_msg(channel, '4.进入打包路径:' + cmd)
                 log_str += '4.进入打包路径:' + cmd
                 cmd = 'tar -zcvf dist.tar dist'
                 os.system(cmd)
                 log.info('4.开始打包文件:' + cmd)
-                create_msg('4.开始打包文件:' + cmd)
+                create_msg(channel, '4.开始打包文件:' + cmd)
                 log_str += '4.开始打包文件:' + cmd
                 # 连接服务器
                 con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
                 log.info('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
-                create_msg('5.连接服务器'+ssh_user+'@'+ssh_ip+'完成')
+                create_msg(channel, '5.连接服务器' + ssh_user + '@' + ssh_ip + '完成')
                 log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
                 log.info('5-1.进去服务器路径%s' % str(code_path))
-                create_msg('5-1.进去服务器路径'+ str(code_path))
+                create_msg(channel, '5-1.进去服务器路径' + str(code_path))
                 with con.cd(code_path):
                     log.info('5-2.删除目标文件rm -rf dist.tar')
-                    create_msg('5-2.删除目标文件rm -rf dist.tar')
+                    create_msg(channel, '5-2.删除目标文件rm -rf dist.tar')
                     con.run('rm -rf dist.tar')
                     cmd = (tmp_code_path + '/' + git_name + '.tar', code_path + '/' + git_name + '.tar')
                     log.info('6.上传tar文件:' + str(cmd))
-                    create_msg('6.上传tar文件:' + str(cmd))
+                    create_msg(channel, '6.上传tar文件:' + str(cmd))
                     log_str += '6.上传tar文件:' + str(cmd)
                     con.put(tmp_code_path + '/' + git_name + '/dist.tar', code_path + '/dist.tar')
                     cmd = 'rm -rf dist2/'
                     con.run(cmd)
                     log.info('7.删除以前备份文件:' + cmd)
-                    create_msg('7.删除以前备份文件:' + cmd)
+                    create_msg(channel, '7.删除以前备份文件:' + cmd)
                     log_str += '7.删除以前备份文件:' + cmd
                     cmd = 'cp -r dist dist2'
                     con.run(cmd)
                     log.info('7.开始备份文件:' + cmd)
-                    create_msg('7.开始备份文件:' + cmd)
+                    create_msg(channel, '7.开始备份文件:' + cmd)
                     log_str += '7.开始备份文件:' + cmd
                     cmd = 'tar zxvf dist.tar'
                     con.run(cmd)
                     log.info('9.解压文件:' + cmd)
-                    create_msg('9.解压文件:' + cmd)
+                    create_msg(channel, '9.解压文件:' + cmd)
                     log_str += '9.解压文件:' + cmd
                     for after_line in after_list:
                         if after_line:
                             con.run(after_line)
                             log.info('10.执行拉取后的操作完成:%s' % after_line)
-                            create_msg('10.执行拉取后的操作完成:' + after_line)
+                            create_msg(channel, '10.执行拉取后的操作完成:' + after_line)
                             log_str += '10.执行拉取后的操作完成:%s' % after_line
                     message_bit = '发布成功...'
                     log_status = 1
                 log.info('10.%s->发布成功...' % git_name)
-                create_msg('10.%s->发布成功...'+ git_name)
+                create_msg(channel, '10.%s->发布成功...' + git_name)
                 log_str += '10.%s->发布成...' % git_name
             except Exception as e:
                 log.error('发布出错error:%s' % str(e))
-                create_msg('发布出错error:'+ str(e))
+                create_msg(channel, '发布出错error:' + str(e))
                 log_str += 'error:%s' % str(e)
                 message_bit = '发布失败，详情请查看日志。'
             DeployStart.objects.filter(id=obj.id).update(status=1)
@@ -424,6 +431,7 @@ class FrontEndAdmin(admin.ModelAdmin):
 
         else:
             message_bit = '该%s项目有人正在发布，请等待...' % git_name
+        rabbit_close(connection)
         self.message_user(request, '%s' % message_bit)
 
     deploy_project.short_description = '一键发布'
