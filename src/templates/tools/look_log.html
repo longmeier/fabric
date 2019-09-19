@@ -13,7 +13,7 @@
 <script type="text/javascript" src="https://cdn.bootcss.com/sockjs-client/1.4.0/sockjs.min.js"></script>
 <script type="text/javascript" src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
 <script>
-    ws = new WebSocket('ws://localhost:15674/ws');
+    ws = new WebSocket('ws://39.96.5.133:15674/ws');
     var client = Stomp.over(ws);
     client.heartbeat.outgoing = 0;
 	client.heartbeat.incoming = 0;
@@ -33,7 +33,7 @@
     var on_error =  function() {
         console.log('error');
     };
-    client.connect('bolin', 'bolin1024', on_connect, on_error, '/');
+    client.connect('admin', 'bolin1024', on_connect, on_error, '/');
 
 	console.log(">>>连接上http://tstmq.bolineyecare.com");
 
