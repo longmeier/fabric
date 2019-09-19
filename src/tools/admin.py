@@ -161,6 +161,7 @@ class SettingsAdmin(admin.ModelAdmin):
                     message_bit = '8.%s->发布成功...' % git_name
                     log_status = 1
             except Exception as e:
+                DeployStart.objects.filter(id=obj.id).update(status=1)
                 log.error('发布出错error:%s', str(e))
                 create_msg(channel, '发布出错error:' + str(e))
                 log_str += 'error:%s' % str(e)
@@ -422,6 +423,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 create_msg(channel, '10.%s->发布成功...' + git_name)
                 log_str += '10.%s->发布成...' % git_name
             except Exception as e:
+                DeployStart.objects.filter(id=obj.id).update(status=1)
                 log.error('发布出错error:%s' % str(e))
                 create_msg(channel, '发布出错error:' + str(e))
                 log_str += 'error:%s' % str(e)
