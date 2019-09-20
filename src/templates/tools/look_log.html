@@ -22,6 +22,7 @@
 		//data.body是接收到的数据
 		client.subscribe("/queue/fabric_log", function(data) {
 			var msg = data.body;
+			console.log(msg);
 			if(msg.indexOf("成功") >= 0 ) {
                html_+='<li class="msgli">' + msg + '</li>';
             }else{
