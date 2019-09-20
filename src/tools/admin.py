@@ -359,7 +359,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 channel, connection = rabbit_connect()
                 if connection.is_closed:
                     log.info('连接已关闭')
-                if channel.is_close:
+                if channel.is_closed:
                     log.info('信道已关闭')
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
