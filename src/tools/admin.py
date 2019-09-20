@@ -368,7 +368,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
                     log.info('[npm]' + line)
-                    create_msg(channel, '[npm]' + line)
+                    create_msg(channel, '[npm]' + str(line))
                 cmd = tmp_code_path + '/' + git_name + ''
                 os.chdir(cmd)
                 os.system('rm -rf dist.tar')
