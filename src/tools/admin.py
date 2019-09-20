@@ -368,9 +368,11 @@ class FrontEndAdmin(admin.ModelAdmin):
 
                 log.info('3.执行npm命令:npm run build')
                 create_msg(channel, '3.执行npm命令:npm run build')
+                rabbit_close(connection)
                 log_str += '3.执行npm命令:npm run build'
                 npm_line = os.popen('npm run build')
                 info = npm_line.readlines()  # 读取命令行的输出到一个list
+                channel, connection = rabbit_connect()
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
                     log.info('[npm]' + line)
