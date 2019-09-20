@@ -14,7 +14,6 @@
 <script type="text/javascript" src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
 <script>
     ws = new WebSocket('wss://tstmq.bolineyecare.com/ws');
-    <!--ws = new SockJS('https://tstmq.bolineyecare.com/stomp')-->
     var client = Stomp.over(ws);
     client.heartbeat.outgoing = 0;
 	client.heartbeat.incoming = 0;
@@ -23,11 +22,13 @@
 		client.subscribe("/queue/fabric_log", function(data) {
 			var msg = data.body;
 			console.log(msg);
+			var html_ = '';
 			if(msg.indexOf("成功") >= 0 ) {
                html_+='<li class="msgli">' + msg + '</li>';
             }else{
                html_+='<li class="msgli2">' + msg + '</li>';
             }
+            console.log('结果'+ html);
             $('#msg').prepend(html_);
 		});
 	};
@@ -39,27 +40,28 @@
 
 	console.log(">>>连接上http://tstmq.bolineyecare.com");
 
+
 </script>
 <!--<script type="text/javascript">-->
-        <!--$(document).ready(function () {-->
-            <!--var timer = setInterval(function(){checkDone(timer)},1000);-->
-        <!--});-->
-     <!--function checkDone() {-->
-        <!--$.post('/get_log/',{},function (data) {-->
-               <!--var html_='';-->
-               <!--for(i=0; i<data.length;i++){-->
-                    <!--var line = data[i];-->
-                    <!--if(line.indexOf("成功") >= 0 ) {-->
-                        <!--html_+='<li class="msgli">' + data[i] + '</li>';-->
-                    <!--}else{-->
-                        <!--html_+='<li class="msgli2">' + data[i] + '</li>';-->
-                    <!--}-->
+<!--$(document).ready(function () {-->
+<!--var timer = setInterval(function(){checkDone(timer)},1000);-->
+<!--});-->
+<!--function checkDone() {-->
+<!--$.post('/get_log/',{},function (data) {-->
+<!--var html_='';-->
+<!--for(i=0; i<data.length;i++){-->
+<!--var line = data[i];-->
+<!--if(line.indexOf("成功") >= 0 ) {-->
+<!--html_+='<li class="msgli">' + data[i] + '</li>';-->
+<!--}else{-->
+<!--html_+='<li class="msgli2">' + data[i] + '</li>';-->
+<!--}-->
 
-               <!--}-->
-               <!--$('#msg').html(html_);-->
-            <!--}-->
-         <!--)-->
-     <!--}-->
+<!--}-->
+<!--$('#msg').html(html_);-->
+<!--}-->
+<!--)-->
+<!--}-->
 
 <!--</script>-->
 
@@ -76,6 +78,7 @@
 
        color:#00FF00;
      }
+
 
 </style>
 {% endblock %}
