@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block extrahead %}
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="https://cdn.bootcss.com/sockjs-client/1.4.0/sockjs.min.js"></script>
-<script type="text/javascript" src="https://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="http://cdn.bootcss.com/sockjs-client/1.4.0/sockjs.min.js"></script>
+<script type="text/javascript" src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
 <script>
     <!--ws = new WebSocket('wss://tstmq.bolineyecare.com:15674/');-->
     ws = new SockJS('http://tstmq.bolineyecare.com:15674/stomp')
