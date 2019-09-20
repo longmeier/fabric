@@ -22,16 +22,17 @@ def rabbit_close(connection):
     connection.close()
 
 
-def create_msg(channel, msg, connection):
+def create_msg(channel, msg, connection=None):
     """
     消息发送方
     :param msg:
     :return:
     """
-    if connection.is_closed:
-        log.info('连接已关闭')
-    if channel.is_closed:
-        log.info('信道已关闭')
+    if connection:
+        if connection.is_closed:
+            log.info('连接已关闭')
+        if channel.is_closed:
+            log.info('信道已关闭')
 
     # durable server挂了 队列仍然存在
     channel.queue_declare(queue='fabric_log', durable=True)

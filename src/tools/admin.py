@@ -352,9 +352,11 @@ class FrontEndAdmin(admin.ModelAdmin):
                     os.chdir(cmd)
                 log.info('3.执行yarn命令:yarn')
                 create_msg(channel, '3.执行yarn命令:yarn')
+                rabbit_close(connection)
                 log_str += '3.执行yarn命令:yarn'
                 yarn_line = os.popen('yarn')  # 执行该命令
                 info = yarn_line.readlines()  # 读取命令行的输出到一个list
+                channel, connection = rabbit_connect()
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
                     log.info('[yarn]' + line)
