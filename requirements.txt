@@ -8,3 +8,4 @@ pymysql==0.9.3
 django-model-utils==3.1.2
 Fabric3==2.4.0
 pika==1.1.0
+django-kronos # crontab的django封装，做定时任务很容易了
