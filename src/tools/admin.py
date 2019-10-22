@@ -446,9 +446,9 @@ class FrontEndAdmin(admin.ModelAdmin):
                     log.info('5-5.开始备份:cp -r dist dist2 ')
                     create_msg(channel, '5-5.开始备份:cp -r dist dist2 ')
                     os.system('cp -r dist dist2 ')
-                    cmd = 'tar zxvf dist.tar'
-                    os.system(cmd)
-                    log.info('6.解压文件:' + cmd)
+                    os.system('tar zxvf ' + code_path + '/dist.tar')
+                    log.info('6.解压文件:tar zxvf ' + code_path + '/dist.tar')
+                    create_msg(channel, 'tar zxvf ' + code_path + '/dist.tar')
                     log.info('7.%s->发布成功...' % git_name)
                     create_msg(channel, '7.%s->发布成功...' + git_name)
                     log_str += '7.%s->发布成...' % git_name
