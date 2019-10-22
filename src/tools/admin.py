@@ -429,7 +429,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                         message_bit = '发布成功...'
                         log_status = 1
                 else:
-                    log.info('5-1.删除目标文件rm -rf dist.tar')
+                    log.info('5-1.删除目标文件rm -rf ' + code_path + '/dist.tar')
                     create_msg(channel, '5-1.删除目标文件 rm -rf ' + code_path + '/dist.tar')
                     os.system('rm -rf ' + code_path + '/dist.tar')
                     # 测试服务器
