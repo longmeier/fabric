@@ -388,48 +388,73 @@ class FrontEndAdmin(admin.ModelAdmin):
                 log.info('4.开始打包文件:' + cmd)
                 create_msg(channel, '4.开始打包文件:' + cmd)
                 log_str += '4.开始打包文件:' + cmd
-                # 连接服务器
-                con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
-                log.info('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
-                create_msg(channel, '5.连接服务器' + ssh_user + '@' + ssh_ip + '完成')
-                log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
-                log.info('5-1.进去服务器路径%s' % str(code_path))
-                create_msg(channel, '5-1.进去服务器路径' + str(code_path))
-                with con.cd(code_path):
-                    log.info('5-2.删除目标文件rm -rf dist.tar')
-                    create_msg(channel, '5-2.删除目标文件rm -rf dist.tar')
-                    con.run('rm -rf dist.tar')
-                    cmd = (tmp_code_path + '/' + git_name + '.tar', code_path + '/' + git_name + '.tar')
-                    log.info('6.上传tar文件:' + str(cmd))
-                    create_msg(channel, '6.上传tar文件:' + str(cmd))
-                    log_str += '6.上传tar文件:' + str(cmd)
-                    con.put(tmp_code_path + '/' + git_name + '/dist.tar', code_path + '/dist.tar')
-                    cmd = 'rm -rf dist2/'
-                    con.run(cmd)
-                    log.info('7.删除以前备份文件:' + cmd)
-                    create_msg(channel, '7.删除以前备份文件:' + cmd)
-                    log_str += '7.删除以前备份文件:' + cmd
-                    cmd = 'cp -r dist dist2'
-                    con.run(cmd)
-                    log.info('7.开始备份文件:' + cmd)
-                    create_msg(channel, '7.开始备份文件:' + cmd)
-                    log_str += '7.开始备份文件:' + cmd
+                if server_flag == 2:  # 生产服务器
+                    # 连接服务器
+                    con = Connection(ssh_user + '@' + ssh_ip, connect_kwargs={'password': ssh_pwd})
+                    log.info('5.连接服务器%s@%s完成' % (ssh_user, ssh_ip))
+                    create_msg(channel, '5.连接服务器' + ssh_user + '@' + ssh_ip + '完成')
+                    log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
+                    log.info('5-1.进去服务器路径%s' % str(code_path))
+                    create_msg(channel, '5-1.进去服务器路径' + str(code_path))
+                    with con.cd(code_path):
+                        log.info('5-2.删除目标文件rm -rf dist.tar')
+                        create_msg(channel, '5-2.删除目标文件rm -rf dist.tar')
+                        con.run('rm -rf dist.tar')
+                        cmd = (tmp_code_path + '/' + git_name + '.tar', code_path + '/' + git_name + '.tar')
+                        log.info('6.上传tar文件:' + str(cmd))
+                        create_msg(channel, '6.上传tar文件:' + str(cmd))
+                        log_str += '6.上传tar文件:' + str(cmd)
+                        con.put(tmp_code_path + '/' + git_name + '/dist.tar', code_path + '/dist.tar')
+                        cmd = 'rm -rf dist2/'
+                        con.run(cmd)
+                        log.info('7.删除以前备份文件:' + cmd)
+                        create_msg(channel, '7.删除以前备份文件:' + cmd)
+                        log_str += '7.删除以前备份文件:' + cmd
+                        cmd = 'cp -r dist dist2'
+                        con.run(cmd)
+                        log.info('7.开始备份文件:' + cmd)
+                        create_msg(channel, '7.开始备份文件:' + cmd)
+                        log_str += '7.开始备份文件:' + cmd
+                        cmd = 'tar zxvf dist.tar'
+                        con.run(cmd)
+                        log.info('9.解压文件:' + cmd)
+                        create_msg(channel, '9.解压文件:' + cmd)
+                        log_str += '9.解压文件:' + cmd
+                        for after_line in after_list:
+                            if after_line:
+                                con.run(after_line)
+                                log.info('10.执行拉取后的操作完成:%s' % after_line)
+                                create_msg(channel, '10.执行拉取后的操作完成:' + after_line)
+                                log_str += '10.执行拉取后的操作完成:%s' % after_line
+                        message_bit = '发布成功...'
+                        log_status = 1
+                else:
+                    log.info('5-1.删除目标文件rm -rf dist.tar')
+                    create_msg(channel, '5-1.删除目标文件 rm -rf ' + code_path + '/dist.tar')
+                    os.system('rm -rf ' + code_path + '/dist.tar')
+                    # 测试服务器
+                    cmd = 'mv dist.tar ' + code_path
+                    log.info('5-2.本地copy tar文件:' + str(cmd))
+                    create_msg(channel, '5-2.本地copy tar文件:' + str(cmd))
+                    os.system(cmd)
+                    log.info('5-3.cd ' + str(code_path) + '目录')
+                    create_msg(channel, '5-3.cd ' + str(code_path) + '目录')
+                    os.system('cd ' + str(code_path))
+                    log.info('5-4.删除以前备份文件:rm -rf dist2/ ')
+                    create_msg(channel, '5-4.删除以前备份文件:rm -rf dist2/ ')
+                    os.system('rm -rf dist2/ ')
+                    log.info('5-5.开始备份:cp -r dist dist2 ')
+                    create_msg(channel, '5-5.开始备份:cp -r dist dist2 ')
+                    os.system('cp -r dist dist2 ')
                     cmd = 'tar zxvf dist.tar'
-                    con.run(cmd)
-                    log.info('9.解压文件:' + cmd)
-                    create_msg(channel, '9.解压文件:' + cmd)
-                    log_str += '9.解压文件:' + cmd
-                    for after_line in after_list:
-                        if after_line:
-                            con.run(after_line)
-                            log.info('10.执行拉取后的操作完成:%s' % after_line)
-                            create_msg(channel, '10.执行拉取后的操作完成:' + after_line)
-                            log_str += '10.执行拉取后的操作完成:%s' % after_line
+                    os.system(cmd)
+                    log.info('6.解压文件:' + cmd)
+                    log.info('7.%s->发布成功...' % git_name)
+                    create_msg(channel, '7.%s->发布成功...' + git_name)
+                    log_str += '7.%s->发布成...' % git_name
                     message_bit = '发布成功...'
                     log_status = 1
-                log.info('10.%s->发布成功...' % git_name)
-                create_msg(channel, '10.%s->发布成功...' + git_name)
-                log_str += '10.%s->发布成...' % git_name
+
             except Exception as e:
                 DeployStart.objects.filter(id=obj.id).update(status=1)
                 log.error('发布出错error:%s' % str(e))
