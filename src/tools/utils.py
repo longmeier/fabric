@@ -7,18 +7,20 @@ log = logging.getLogger(__name__)
 
 
 def rabbit_connect():
-    rabbit_name = settings.RABBIT_NAME
-    rabbit_pwd = settings.RABBIT_PWD
-    rabbit_url = settings.RABBIT_URL
-    # log.info('name:%s;pwd:%s;url:%s', str(rabbit_name), str(rabbit_pwd), str(rabbit_url))
-    credentials = pika.PlainCredentials(rabbit_name, rabbit_pwd)
-    connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host=rabbit_url, port=5672, credentials=credentials))  # 定义连接池
-    channel = connection.channel()  # 声明队列以向其发送消息消息
+    # rabbit_name = settings.RABBIT_NAME
+    # rabbit_pwd = settings.RABBIT_PWD
+    # rabbit_url = settings.RABBIT_URL
+    # # log.info('name:%s;pwd:%s;url:%s', str(rabbit_name), str(rabbit_pwd), str(rabbit_url))
+    # credentials = pika.PlainCredentials(rabbit_name, rabbit_pwd)
+    # connection = pika.BlockingConnection(pika.ConnectionParameters(
+    #     host=rabbit_url, port=5672, credentials=credentials))  # 定义连接池
+    # channel = connection.channel()  # 声明队列以向其发送消息消息
+    channel, connection = None, None
     return channel, connection
 
 
 def rabbit_close(connection):
+    pass
     connection.close()
 
 
@@ -28,6 +30,7 @@ def create_msg(channel, msg, connection=None):
     :param msg:
     :return:
     """
+    pass
 
     # durable server挂了 队列仍然存在
     channel.queue_declare(queue='fabric_log', durable=True)
