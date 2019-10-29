@@ -357,10 +357,10 @@ class FrontEndAdmin(admin.ModelAdmin):
                 yarn_line = os.popen('yarn')  # 执行该命令
                 info = yarn_line.readlines()  # 读取命令行的输出到一个list
                 channel, connection = rabbit_connect()
-                # if connection.is_closed:
-                #     log.info('连接已关闭')
-                # if channel.is_closed:
-                #     log.info('信道已关闭')
+                if connection.is_closed:
+                    log.info('连接已关闭')
+                if channel.is_closed:
+                    log.info('信道已关闭')
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
                     log.info('[yarn]' + line)
@@ -396,36 +396,35 @@ class FrontEndAdmin(admin.ModelAdmin):
                     log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
                     log.info('5-1.进去服务器路径%s' % str(code_path))
                     create_msg(channel, '5-1.进去服务器路径' + str(code_path))
-                    rabbit_close(connection)
                     with con.cd(code_path):
                         log.info('5-2.删除目标文件rm -rf dist.tar')
-                        # create_msg(channel, '5-2.删除目标文件rm -rf dist.tar')
-                        # con.run('rm -rf dist.tar')
+                        create_msg(channel, '5-2.删除目标文件rm -rf dist.tar')
+                        con.run('rm -rf dist.tar')
                         cmd = (tmp_code_path + '/' + git_name + '/dist.tar', code_path + '/' + git_name + '/dist.tar')
                         log.info('6.上传tar文件:' + str(cmd))
-                        # create_msg(channel, '6.上传tar文件:' + str(cmd))
+                        create_msg(channel, '6.上传tar文件:' + str(cmd))
                         log_str += '6.上传tar文件:' + str(cmd)
                         con.put(tmp_code_path + '/' + git_name + '/dist.tar', code_path + '/dist.tar')
-                        # cmd = 'rm -rf dist2/'
-                        # con.run(cmd)
-                        # log.info('7.删除以前备份文件:' + cmd)
-                        # create_msg(channel, '7.删除以前备份文件:' + cmd)
+                        cmd = 'rm -rf dist2/'
+                        con.run(cmd)
+                        log.info('7.删除以前备份文件:' + cmd)
+                        create_msg(channel, '7.删除以前备份文件:' + cmd)
                         log_str += '7.删除以前备份文件:' + cmd
                         cmd = 'cp -r dist dist2'
                         con.run(cmd)
                         log.info('7.开始备份文件:' + cmd)
-                        # create_msg(channel, '7.开始备份文件:' + cmd)
+                        create_msg(channel, '7.开始备份文件:' + cmd)
                         log_str += '7.开始备份文件:' + cmd
                         cmd = 'tar zxvf dist.tar'
                         con.run(cmd)
                         log.info('9.解压文件:' + cmd)
-                        # create_msg(channel, '9.解压文件:' + cmd)
+                        create_msg(channel, '9.解压文件:' + cmd)
                         log_str += '9.解压文件:' + cmd
                         for after_line in after_list:
                             if after_line:
                                 con.run(after_line)
                                 log.info('10.执行拉取后的操作完成:%s' % after_line)
-                                # create_msg(channel, '10.执行拉取后的操作完成:' + after_line)
+                                create_msg(channel, '10.执行拉取后的操作完成:' + after_line)
                                 log_str += '10.执行拉取后的操作完成:%s' % after_line
                         message_bit = '发布成功...'
                         log_status = 1
