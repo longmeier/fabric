@@ -357,10 +357,10 @@ class FrontEndAdmin(admin.ModelAdmin):
                 yarn_line = os.popen('yarn')  # 执行该命令
                 info = yarn_line.readlines()  # 读取命令行的输出到一个list
                 channel, connection = rabbit_connect()
-                if connection.is_closed:
-                    log.info('连接已关闭')
-                if channel.is_closed:
-                    log.info('信道已关闭')
+                # if connection.is_closed:
+                #     log.info('连接已关闭')
+                # if channel.is_closed:
+                #     log.info('信道已关闭')
                 for line in info:  # 按行遍历
                     line = line.strip('\r\n')
                     log.info('[yarn]' + line)
