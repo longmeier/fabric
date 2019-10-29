@@ -400,14 +400,14 @@ class FrontEndAdmin(admin.ModelAdmin):
                     with con.cd(code_path):
                         log.info('5-2.删除目标文件rm -rf dist.tar')
                         # create_msg(channel, '5-2.删除目标文件rm -rf dist.tar')
-                        con.run('rm -rf dist.tar')
+                        # con.run('rm -rf dist.tar')
                         cmd = (tmp_code_path + '/' + git_name + '.tar', code_path + '/' + git_name + '.tar')
                         log.info('6.上传tar文件:' + str(cmd))
                         # create_msg(channel, '6.上传tar文件:' + str(cmd))
                         log_str += '6.上传tar文件:' + str(cmd)
                         con.put(tmp_code_path + '/' + git_name + '/dist.tar', code_path + '/dist.tar')
-                        cmd = 'rm -rf dist2/'
-                        con.run(cmd)
+                        # cmd = 'rm -rf dist2/'
+                        # con.run(cmd)
                         log.info('7.删除以前备份文件:' + cmd)
                         # create_msg(channel, '7.删除以前备份文件:' + cmd)
                         log_str += '7.删除以前备份文件:' + cmd
