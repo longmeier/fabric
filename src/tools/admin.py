@@ -396,6 +396,7 @@ class FrontEndAdmin(admin.ModelAdmin):
                     log_str += '5.连接服务器%s@%s完成' % (ssh_user, ssh_ip)
                     log.info('5-1.进去服务器路径%s' % str(code_path))
                     create_msg(channel, '5-1.进去服务器路径' + str(code_path))
+                    rabbit_close(connection)
                     with con.cd(code_path):
                         log.info('5-2.删除目标文件rm -rf dist.tar')
                         # create_msg(channel, '5-2.删除目标文件rm -rf dist.tar')
