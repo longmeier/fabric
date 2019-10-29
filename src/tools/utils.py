@@ -21,7 +21,7 @@ def rabbit_connect():
 
 def rabbit_close(connection):
     pass
-    connection.close()
+    # connection.close()
 
 
 def create_msg(channel, msg, connection=None):
@@ -33,7 +33,7 @@ def create_msg(channel, msg, connection=None):
     pass
 
     # durable server挂了 队列仍然存在
-    channel.queue_declare(queue='fabric_log', durable=True)
-    # delivery_mode=2：使消息持久化。和队列名称绑定routing_key
-    channel.basic_publish(exchange='', routing_key='fabric_log', body=msg,
-                          properties=pika.BasicProperties(delivery_mode=2))
+    # channel.queue_declare(queue='fabric_log', durable=True)
+    # # delivery_mode=2：使消息持久化。和队列名称绑定routing_key
+    # channel.basic_publish(exchange='', routing_key='fabric_log', body=msg,
+    #                       properties=pika.BasicProperties(delivery_mode=2))
