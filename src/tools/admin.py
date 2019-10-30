@@ -131,10 +131,10 @@ class SettingsAdmin(admin.ModelAdmin):
                 create_msg(channel, '2.获取git项目名称完成:' + git_url)
                 log_str += '2.获取git项目名称完成:%s' % git_url
                 # 检测git连接
-                with con.cd(code_path + '/' + git_name):
-                    log.info('3.进入目标路径完成:%s' % code_path + '/' + git_name)
-                    create_msg(channel, '3.进入目标路径完成:' + code_path + '/' + git_name)
-                    log_str += '3.进入目标路径完成:%s' % code_path + '/' + git_name
+                with con.cd(code_path):
+                    log.info('3.进入目标路径完成:%s' % code_path)
+                    create_msg(channel, '3.进入目标路径完成:' + code_path)
+                    log_str += '3.进入目标路径完成:%s' % code_path
                     for before_line in before_list:
                         if before_line:
                             con.run(before_line)
