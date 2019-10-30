@@ -22,6 +22,7 @@ class Settings(TimeStampedModel):
     git_url = models.CharField(max_length=500, verbose_name='git地址', help_text='git地址')
     git_branch = models.CharField(max_length=500, verbose_name='git分支', help_text='master/develop')
     code_path = models.CharField(max_length=500, help_text='发布目标代码路径上一级', verbose_name='发布目标代码路径上一级')
+    pull_path = models.CharField(max_length=500, help_text='代码拉取地址', verbose_name='代码拉取地址')
     tmp_code_path = models.CharField(max_length=500, help_text='检测代码路径', verbose_name='检测代码路径')
     before_cmd = models.TextField(blank=True, null=True, help_text='部署前命令', verbose_name='部署前命令')
     after_cmd = models.TextField(blank=True, null=True, verbose_name='部署后命令', help_text='部署后命令')
