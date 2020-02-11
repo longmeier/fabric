@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-Django==2.1.5
+Django==2.2.10
 django-environ==0.4.4
 django_mysql==2.3.0
 gunicorn==19.8.1
